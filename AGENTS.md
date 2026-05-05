@@ -36,3 +36,30 @@ GitHub 仓库：https://github.com/YZzzz-652/vertical-reading
 - 不修改字段结构、单选合法值列表、飞书表格字段名
 - 不写入任何 App Secret 或凭证
 - 不确定的修改先输出方案确认，不直接执行
+
+---
+
+## 更新指令格式
+
+Claude 对话结束时会生成标准更新指令，格式如下。
+收到这种格式的指令后，按【】块逐文件处理，没有出现的文件不要动。
+
+---
+## Vertical Reading 文档更新指令
+
+请按以下内容更新文档并推送到 GitHub，每个文件单独一次 commit。
+
+【VerticalReading_决策日志.md】
+在「[对应分类]」下新增：
+[内容]
+
+【VerticalReading_项目启动文档.md】
+将「[段落名]」部分更新为：
+[新内容]
+
+【VerticalReading_Database_启动文档.md】
+在书目表中：
+- 将《书名》状态改为 ✅已完成，条数填 XX 条
+
+完成后列出每个文件的 commit hash，确认 push 成功。
+---
