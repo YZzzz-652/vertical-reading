@@ -37,6 +37,26 @@ GitHub 仓库：https://github.com/YZzzz-652/vertical-reading
 - 不写入任何 App Secret 或凭证
 - 不确定的修改先输出方案确认，不直接执行
 
+## 快捷指令
+
+### /status
+执行：
+1. git pull origin main
+2. 读取四个项目文档
+3. 输出当前项目快照：
+   - 当前阶段（数据生产 / 前端开发 / 部署）
+   - 数据进度：已完成 X 部 / 41 部，共 XX 条
+   - 前端进度
+   - 待决定事项
+   - 下一个优先任务
+
+### /update [粘贴 Claude 生成的更新指令]
+执行：
+1. 按【】块逐文件修改
+2. 每个文件单独 git add → commit → push
+3. 没有出现的文件不动
+4. 完成后列出每个文件的 commit hash，确认 push 成功
+
 ---
 
 ## 更新指令格式
