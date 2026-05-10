@@ -114,6 +114,15 @@
 * 原因：飞书 App Secret 只存在服务端环境变量，不能暴露给前端，必须走服务端代理
 * 否定方案：前端直接调用飞书 API（CORS 报错 + Secret 泄露风险）
 
+**2026-05-10** · noUiSlider CDN 源改为 unpkg
+* 决定：noUiSlider 从 jsDelivr 换到 unpkg 加载
+* 原因：jsDelivr 在当前开发环境加载失败，会阻塞地图初始化
+* 否定方案：jsDelivr（加载不稳定）
+
+**2026-05-10** · 油画图标放置路径确定为 public/icons/
+* 决定：8张阶层图标 PNG 放在 public/icons/ 目录，文件名即阶层名称
+* 原因：Next.js 静态资源标准路径，Leaflet DivIcon 可直接用 /icons/阶层名.png 引用
+
 ---
 
 ## 已知技术问题
@@ -126,10 +135,13 @@
 * 问题：项目在OneDrive目录下，Turbopack报native bindings错误无法启动
 * 解决：使用`--webpack`参数，已写入package.json
 
+**2026-05-10** · Codex 无法访问 Claude 环境路径
+* 问题：Claude 生成的文件在 /mnt/user-data/outputs/ 路径下，Codex 在用户本地运行，无法访问该路径
+* 解决：图片素材需用户手动下载后放入项目 public/ 目录，再由 Codex 引用
+
 ---
 
 ## 待决定事项
 
 * 产品正式名称（当前暂定：Vertical Reading）
 * 后续是否面向公众开放
-
