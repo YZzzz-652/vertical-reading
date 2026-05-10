@@ -12,7 +12,7 @@
 
 | 文档 | 内容 | 什么时候读 |
 | --- | --- | --- |
-| `VerticalReading_项目启动文档.md` | 产品定位、界面结构、技术栈、当前Roadmap | 每次必读 |
+| `VerticalReading_项目启动文档.md` | 产品定位、界面结构、技术栈、当前 Roadmap、当前待办表格 | 每次必读 |
 | `VerticalReading_决策日志.md` | 历史决策和否定方案 | 每次必读，避免重复提已否定的方案 |
 | `VerticalReading_Database_启动文档.md` | 书目清单、数据字段规范、提取规则 | 本次任务涉及数据生产时读 |
 
