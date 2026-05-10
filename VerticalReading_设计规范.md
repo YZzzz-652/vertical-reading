@@ -1,4 +1,4 @@
-# Vertical Reading · 设计规范文档
+# 经纬 Parallels · 设计规范文档
 
 > 本文档供 Claude 阅读理解后，指导前端代码实施。所有规范值均为精确值，不得自行推断或替换。
 
@@ -6,7 +6,9 @@
 
 ## 一、项目背景
 
-Vertical Reading 是一个将文学书籍投射于历史地图之上的阅读工具。用户可以在同一时间坐标下，看到不同书籍中的人物在不同地点经历的故事。核心交互围绕地图、时间轴、人物阶级标记展开。
+**中文名：经纬 · 英文名：Parallels**
+
+经纬（Parallels）是一个将文学书籍投射于历史地图之上的阅读工具。用户可以在同一时间坐标下，看到不同书籍中的人物在不同地点经历的故事。核心交互围绕地图、时间轴、人物阶级标记展开。
 
 技术栈：Next.js + Tailwind CSS + Leaflet + OpenStreetMap + Vercel
 
@@ -81,7 +83,7 @@ Vertical Reading 是一个将文学书籍投射于历史地图之上的阅读工
 - 背景：纯羊皮纸色 `#F5EDD8`
 - 布局：居中
 - 内容层级：
-  1. 项目名称大标题（H1，Playfair Display 72px italic）
+  1. 项目名称大标题：英文 Parallels / 中文 经纬（H1，Playfair Display 72px italic）
   2. 项目介绍文字（正文，EB Garamond 15px，line-height 1.75）
   3. 向下进入地图的引导（可为向下箭头或文字提示）
 
@@ -91,7 +93,7 @@ Vertical Reading 是一个将文学书籍投射于历史地图之上的阅读工
 
 - 高度：48px
 - 背景：`#2C1A0E`，opacity 0.85，backdrop-filter: blur(8px)
-- 左侧：项目名称，Playfair Display 18px italic，颜色 `#F5EDD8`
+- 左侧：项目名称 Parallels（经纬），Playfair Display 18px italic，颜色 `#F5EDD8`
 - 右侧：暂无导航项
 - 定位：fixed，始终在页面顶部，地图页时透出底图
 
