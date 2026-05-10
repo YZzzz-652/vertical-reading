@@ -30,20 +30,31 @@
 
 ### 字体规范
 
+**英文字体**
+
 | 用途 | 字体 | 来源 |
 |------|------|------|
-| 标题、导航 | Playfair Display | Google Fonts |
-| 正文、标签、小字 | EB Garamond | Google Fonts |
+| 英文标题、导航 | Playfair Display | Google Fonts |
+| 英文正文、标签、小字 | EB Garamond | Google Fonts |
+
+**中文字体**
+
+| 用途 | 字体 | 来源 |
+|------|------|------|
+| 中文标题 | Noto Serif SC | Google Fonts |
+| 中文正文、标签、小字 | Noto Serif SC | Google Fonts |
+
+**规则：中英文使用各自对应字体，不得混用。同一层级的中英文字重逻辑保持一致。**
 
 ### 字号层级
 
-| 层级 | 字体 | 字号 | 字重 | 备注 |
-|------|------|------|------|------|
-| H1（首页主标题） | Playfair Display | 72px | 900 | italic |
-| H2（面板标题、副标题） | Playfair Display | 22px | 700 | |
-| H3（卡片内标题） | Playfair Display | 16px | 700 | italic |
-| 正文 | EB Garamond | 15px | 400 | line-height 1.75 |
-| 辅助小字 / 标签 | EB Garamond | 11px | 400 | letter-spacing 0.08em |
+| 层级 | 英文字体 | 中文字体 | 英文字号 | 中文字号 | 字重 | 备注 |
+|------|------|------|------|------|------|------|
+| H1（首页主标题） | Playfair Display | Noto Serif SC | 72px | 60px | 900 | 英文 italic |
+| H2（面板标题、副标题） | Playfair Display | Noto Serif SC | 22px | 20px | 700 | 英文 italic |
+| H3（卡片内标题） | Playfair Display | Noto Serif SC | 16px | 15px | 700 | 英文 italic |
+| 正文 | EB Garamond | Noto Serif SC | 15px | 14px | 400／300 | line-height 1.75／1.9 |
+| 辅助小字 / 标签 | EB Garamond | Noto Serif SC | 11px | 11px | 400 | letter-spacing 0.08em |
 
 ### 圆角规范
 

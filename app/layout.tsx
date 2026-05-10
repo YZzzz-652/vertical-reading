@@ -1,5 +1,29 @@
 import type { Metadata } from "next";
+import { Playfair_Display, EB_Garamond, Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const garamond = EB_Garamond({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const notoSerifSc = Noto_Serif_SC({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-zh",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Vertical Reading",
@@ -12,7 +36,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full antialiased">
+    <html
+      lang="zh-CN"
+      className={`h-full antialiased ${playfair.variable} ${garamond.variable} ${notoSerifSc.variable}`}
+    >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
