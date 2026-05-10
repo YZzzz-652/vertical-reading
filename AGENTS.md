@@ -13,10 +13,11 @@ GitHub 仓库：https://github.com/YZzzz-652/vertical-reading
 - VerticalReading_项目启动文档.md：产品定位、技术方案、当前任务进度
 - VerticalReading_决策日志.md：所有产品/技术/数据决策记录
 - VerticalReading_Database_启动文档.md：书目清单和字段规范
+- VerticalReading_设计规范.md：界面设计规范，包含色彩、字体、圆角、组件样式精确值
 
 ## 每次启动的标准流程
 1. git pull origin main（先拉取最新）
-2. 读取上述四个文档
+2. 读取上述五个文档
 3. 简要告诉用户当前项目状态，等待指令
 
 ## 每次收到更新指令后的标准流程
