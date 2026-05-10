@@ -5,6 +5,12 @@ const FEISHU_APP_SECRET = process.env.FEISHU_APP_SECRET!;
 const TABLE_ID = 'tbl30F3J3SBAawcN';
 const APP_TOKEN = 'GXuSb3quXaQGuos7C4ncGyMZn8e';
 
+type FeishuFields = Record<string, string | number | null | undefined>;
+
+type FeishuRecord = {
+  fields: FeishuFields;
+};
+
 async function getTenantAccessToken(): Promise<string> {
   const res = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
     method: 'POST',
@@ -21,8 +27,8 @@ async function getTenantAccessToken(): Promise<string> {
   return data.tenant_access_token;
 }
 
-async function fetchAllRecords(token: string): Promise<any[]> {
-  const allRecords: any[] = [];
+async function fetchAllRecords(token: string): Promise<FeishuRecord[]> {
+  const allRecords: FeishuRecord[] = [];
   let pageToken: string | undefined = undefined;
 
   do {
@@ -48,7 +54,7 @@ async function fetchAllRecords(token: string): Promise<any[]> {
   return allRecords;
 }
 
-function formatRecord(item: any) {
+function formatRecord(item: FeishuRecord) {
   const f = item.fields;
   return {
     id: f['唯一ID'] ?? '',
@@ -79,8 +85,9 @@ export async function GET() {
     const records = await fetchAllRecords(token);
     const events = records.map(formatRecord);
     return NextResponse.json({ success: true, count: events.length, data: events });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const message = err instanceof Error ? err.message : '未知错误';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
