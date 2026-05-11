@@ -27,6 +27,11 @@
 * 决定：不做用户登录和权限系统
 * 后续：面向公众开放时再考虑
 
+**2026-05-11** · 产品名称分层
+* 决定：项目内部和文档统一称 Vertical Reading；网页对外展示名为 Parallels（中文：经纬）
+* 原因：Vertical Reading 不够文艺，不适合作为产品对外名称；但所有项目文档已以 Vertical Reading 命名，内部继续使用，迁移成本高
+* 否定方案：把项目和文档一起改名为 Parallels（迁移成本高、历史追溯麻烦）
+
 ---
 
 ## 数据决策
@@ -123,25 +128,3 @@
 * 决定：8张阶层图标 PNG 放在 public/icons/ 目录，文件名即阶层名称
 * 原因：Next.js 静态资源标准路径，Leaflet DivIcon 可直接用 /icons/阶层名.png 引用
 
----
-
-## 已知技术问题
-
-**2026-04-25** · CSV经纬度负号编码问题
-* 问题：特殊减号字符`−`（非标准ASCII）会导致飞书API报`NumberFieldConvFail`
-* 解决：所有负数经纬度必须使用标准ASCII负号`-`
-
-**2026-04-26** · Turbopack与OneDrive路径不兼容
-* 问题：项目在OneDrive目录下，Turbopack报native bindings错误无法启动
-* 解决：使用`--webpack`参数，已写入package.json
-
-**2026-05-10** · Codex 无法访问 Claude 环境路径
-* 问题：Claude 生成的文件在 /mnt/user-data/outputs/ 路径下，Codex 在用户本地运行，无法访问该路径
-* 解决：图片素材需用户手动下载后放入项目 public/ 目录，再由 Codex 引用
-
----
-
-## 待决定事项
-
-* 产品正式名称（当前暂定：Vertical Reading）
-* 后续是否面向公众开放
