@@ -152,3 +152,8 @@
 * 决定：手动上传 5 个 MD 文档作为新对话开场的不可避免步骤；优化重点转向 review/update 流程本身的紧凑度
 * 原因：web_fetch 工具有 Anthropic 侧缓存层，github.com 网页、raw.githubusercontent.com、api.github.com 三种 URL 都绕不开缓存（实测得到的决策日志比实际版本旧半个月）；Claude 在 claude.ai 网页端无法读本地文件（不像 Codex 是本地进程）
 * 否定方案：用 GitHub Contents API 绕缓存（被 web_fetch 工具策略拦截）；让 Codex 输出"今日简报"代替上传 MD（简报只能装动态状态，无法替代产品定位、设计规范等静态背景知识）
+
+**2026-05-11** · 删除 /decide 指令
+* 决定：从快捷指令系统中删除 /decide
+* 原因：功能完全被 /update 覆盖；对话中自然语言陈述决策即可，/review 会主动追问"否定方案"字段
+* 否定方案：保留 /decide 作为"对话中立即格式化"工具（功能冗余，增加指令记忆负担）
