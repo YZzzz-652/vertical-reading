@@ -1,5 +1,7 @@
 # 经纬 Parallels · 设计规范文档
 
+> **名称说明**：项目内部和文档统一称 **Vertical Reading**；本文档涉及的所有视觉规范均用于网页对外展示，对外展示名为 **Parallels**（中文：经纬）。
+
 > 本文档供 Claude 阅读理解后，指导前端代码实施。所有规范值均为精确值，不得自行推断或替换。
 
 ---
@@ -44,7 +46,9 @@
 | 中文标题 | Noto Serif SC | Google Fonts |
 | 中文正文、标签、小字 | Noto Serif SC | Google Fonts |
 
-**规则：中英文使用各自对应字体，不得混用。同一层级的中英文字重逻辑保持一致。**
+**通用规则**
+- 中英文使用各自对应字体，不得混用
+- 同一层级的中英文字重逻辑保持一致
 
 ### 字号层级
 
@@ -55,6 +59,11 @@
 | H3（卡片内标题） | Playfair Display | Noto Serif SC | 16px | 15px | 700 | 英文 italic |
 | 正文 | EB Garamond | Noto Serif SC | 15px | 14px | 400／300 | line-height 1.75／1.9 |
 | 辅助小字 / 标签 | EB Garamond | Noto Serif SC | 11px | 11px | 400 | letter-spacing 0.08em |
+
+**备注说明**
+- 英文字体可使用 italic（如 H1-H3 标题），中文字体（Noto Serif SC）无 italic 字形，渲染为常规体
+- 正文一行的字重 `400 / 300` 含义待实测后明确（TODO：测试后定稿）
+- 辅助小字 `letter-spacing 0.08em` 仅作用于英文字体
 
 ### 圆角规范
 
@@ -198,7 +207,6 @@
 
 ## 五、全局交互规范
 
-- 全局无直角，所有组件遵循圆角规范
-- 无 hover tooltip
-- 动效统一：显示 / 隐藏为主，过渡时长 0.25s–0.5s，easing ease-in-out
+> 本段只列其他段落未覆盖的全局规则。"全局无直角"详见三·圆角规范，"动效"详见二·动效规范。
+
 - 所有悬浮面板带透明度，透出地图底图
