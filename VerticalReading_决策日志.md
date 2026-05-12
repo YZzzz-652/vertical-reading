@@ -227,3 +227,13 @@
 * 决定：下次新对话开始时，流程从原来的"上传 5 个 MD → /status → 输出重写方案设计"升级为"上传 5 个 MD + 19 问题清单 → Claude 逐题回答（必要时要求补充文件，如 app.css、events.js、preview/ 目录）→ 整理成 VerticalReading_前端重写参考.md → Codex 归档 → 才开始重写方案设计"。该参考文档作为重写开工的硬前置条件
 * 原因：design-reference/ 内部有多份相关但不一致的文件（如 components.jsx 两份、colors_and_type.css 与 tokens.css 字体定义差异、app.css 含 components.jsx 未体现的新设计、`.p-*` 语义类无处使用等），不先做口径统一就开始重写会反复返工
 * 否定方案：直接开始重写方案设计，遇到问题边写边问（今天已证明这会一路追问，效率极低）
+
+
+---
+
+## 设计与归档相关
+
+**2026-05-12** · 前端重写参考文档建立 8 项决策
+* 决定：在《VerticalReading_前端重写参考.md》中锁定 8 项基础口径——source of truth、tokens 改造、性别圆盘、H1 字号、History tab 数据、开工分支策略、Atlas FAB 图标
+* 原因：上一阶段 /review 发现 19 个未澄清的基础问题阻塞重写方案设计，本次对话逐题决策
+* 否定方案：（具体内容详见参考文档，此处不重复）
