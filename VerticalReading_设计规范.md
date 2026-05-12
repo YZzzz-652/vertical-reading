@@ -67,7 +67,7 @@
 
 | 层级 | 英文字体 | 中文字体 | 英文字号 | 中文字号 | 字重 | 备注 |
 |------|------|------|------|------|------|------|
-| H1（首页主标题） | Playfair Display | Noto Serif SC | 72px | 60px | 900 | 英文 italic |
+| H1（首页主标题） | Playfair Display | Noto Serif SC | 92px | 60px | 900 | 英文 italic |
 | H2（面板标题、副标题） | Playfair Display | Noto Serif SC | 22px | 20px | 700 | 英文 italic |
 | H3（卡片内标题） | Playfair Display | Noto Serif SC | 16px | 15px | 700 | 英文 italic |
 | 正文 | EB Garamond | Noto Serif SC | 15px | 14px | 400／300 | line-height 1.75／1.9 |
@@ -77,6 +77,7 @@
 - 英文字体可使用 italic（如 H1-H3 标题），中文字体（Noto Serif SC）无 italic 字形，渲染为常规体
 - 正文一行的字重 `400 / 300` 含义待实测后明确（TODO：测试后定稿）
 - 辅助小字 `letter-spacing 0.08em` 仅作用于英文字体
+- H1 英文字号 2026-05-12 调整：72px → 92px。原因：首页改为左右两栏 + 书墙布局后，72px 视觉上压不住。详见决策日志。
 
 ### 圆角规范
 
