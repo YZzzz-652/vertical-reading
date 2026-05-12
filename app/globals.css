@@ -1,15 +1,13 @@
 @import "tailwindcss";
+@import "./tokens.css";
 
 :root {
-  --background: #F5EDD8;
-  --foreground: #2C1A0E;
-  --paper: rgba(245, 237, 216, 0.97);
-  --paper-soft: rgba(245, 237, 216, 0.96);
-  --line: #c8a87a;
-  --text: #2C1A0E;
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: "EB Garamond", Georgia, serif;
-  --font-zh: "Noto Serif SC", "Songti SC", serif;
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --paper: var(--paper-97);
+  --paper-soft: var(--paper-96);
+  --line: var(--rule);
+  --text: var(--fg);
 }
 
 @theme inline {
