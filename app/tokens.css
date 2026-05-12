@@ -1,208 +1,96 @@
-/* ─────────────────────────────────────────────────────────────
- * Parallels (经纬) · Design Tokens
- * Source of truth: VerticalReading_设计规范.md + app/globals.css
- * ───────────────────────────────────────────────────────────── */
+/* Parallels (经纬) · Design Tokens */
 
 :root {
-  /* ── Color · raw ─────────────────────────────────────────── */
-  --parchment:        #F5EDD8;   /* 羊皮纸底色 */
-  --ink:              #2C1A0E;   /* 深棕近黑 · 主色 */
-  --bronze:           #c8a87a;   /* 暖金棕 · 辅助色 */
+  --parchment: #F5EDD8;
+  --ink: #2C1A0E;
+  --bronze: #c8a87a;
 
-  /* ── Color · translucent surfaces ────────────────────────── */
-  --paper-97:         rgba(245, 237, 216, 0.97);  /* 事件面板 */
-  --paper-96:         rgba(245, 237, 216, 0.96);  /* 搜索框 / 筛选 */
-  --paper-93:         rgba(250, 247, 240, 0.93);  /* leaflet 控件 */
-  --ink-85:           rgba(44, 26, 14, 0.85);     /* 顶部导航 */
-  --ink-60:           rgba(44, 26, 14, 0.60);     /* 首页态导航 */
-  --hairline:         rgba(196, 169, 106, 0.55);  /* 内分隔线 */
-  --line-022:         rgba(44, 26, 14, 0.22);     /* 时间轴轨道 */
-  --line-040:         rgba(44, 26, 14, 0.40);     /* 主刻度 */
-  --line-020:         rgba(44, 26, 14, 0.20);     /* 次刻度 */
-  --year-text:        rgba(44, 26, 14, 0.55);     /* 年份数字 */
+  --paper-97: rgba(245, 237, 216, 0.97);
+  --paper-96: rgba(245, 237, 216, 0.96);
+  --paper-93: rgba(250, 247, 240, 0.93);
+  --ink-85: rgba(44, 26, 14, 0.85);
+  --ink-60: rgba(44, 26, 14, 0.60);
+  --hairline: rgba(196, 169, 106, 0.55);
+  --line-022: rgba(44, 26, 14, 0.22);
+  --line-040: rgba(44, 26, 14, 0.40);
+  --line-020: rgba(44, 26, 14, 0.20);
+  --year-text: rgba(44, 26, 14, 0.55);
 
-  /* ── Color · semantic ───────────────────────────────────── */
-  --bg:               var(--parchment);
-  --fg:               var(--ink);
-  --fg-muted:         #6c532e;        /* 副标题 / legend */
-  --fg-soft:          #71572e;        /* meta / 标签文字 */
-  --fg-on-ink:        var(--parchment);
-  --rule:             var(--bronze);
-  --rule-fade:        linear-gradient(90deg, transparent, rgba(196, 169, 106, 0.85), transparent);
+  --bg: var(--parchment);
+  --fg: var(--ink);
+  --fg-muted: #6c532e;
+  --fg-soft: #71572e;
+  --fg-rich: #33271b;
+  --fg-warm: #5a4525;
+  --fg-chip: #5f4725;
+  --fg-popup: #2d241a;
+  --fg-popup-copy: #3a2d20;
+  --fg-on-ink: var(--parchment);
+  --paper-cream: #efe2c0;
+  --paper-light: #f7eed6;
+  --map-base: #e9e1cf;
+  --map-wash-top: #efe3c4;
+  --map-wash-bottom: #e2d2a8;
+  --rule: var(--bronze);
+  --rule-fade: linear-gradient(90deg, transparent, rgba(196, 169, 106, 0.85), transparent);
 
-  /* ── Type · families ────────────────────────────────────── */
+  --disc-m: #ece1c6;
+  --disc-f: #ead7c6;
+  --disc-m-ring: rgba(139, 115, 64, 0.55);
+  --disc-f-ring: rgba(170, 90, 110, 0.55);
 
-  /* ── Type · scale (英文 / 中文) ──────────────────────────── */
-  --fs-h1-en:         72px;   --fs-h1-zh: 60px;   /* 首页主标题 */
-  --fs-h2-en:         22px;   --fs-h2-zh: 20px;   /* 面板标题、副标题 */
-  --fs-h3-en:         16px;   --fs-h3-zh: 15px;   /* 卡片内标题 */
-  --fs-body-en:       15px;   --fs-body-zh: 14px;
-  --fs-small:         11px;
-  --fs-brand-nav:     18px;   /* 顶部导航品牌 */
-  --lh-body:          1.75;
-  --lh-body-zh:       1.9;
-  --ls-small:         0.08em; /* 仅英文小字 */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "EB Garamond", Georgia, serif;
+  --font-zh: "Noto Serif SC", "Songti SC", serif;
 
-  /* ── Radius ─────────────────────────────────────────────── */
-  --r-panel:          12px;   /* 大面板：筛选 / 事件 */
-  --r-chip:           4px;    /* 标签 / 徽章 / 搜索框 */
-  --r-pill:           999px;  /* 行内 chip / tag in popup */
-  --r-circle:         50%;    /* 标记点头像 */
+  --fs-h1-en: 92px;
+  --fs-h1-zh: 60px;
+  --fs-h2-en: 22px;
+  --fs-h2-zh: 20px;
+  --fs-h3-en: 16px;
+  --fs-h3-zh: 15px;
+  --fs-body-en: 15px;
+  --fs-body-zh: 14px;
+  --fs-small: 11px;
+  --fs-brand-nav: 18px;
+  --lh-body: 1.75;
+  --lh-body-zh: 1.9;
+  --ls-small: 0.08em;
 
-  /* ── Borders & shadows ──────────────────────────────────── */
-  --bd-hair:          0.5px solid var(--bronze);
-  --bd-hair-soft:     1px solid var(--hairline);
-  --bd-marker:        2px solid #ffffff;
+  --r-panel: 12px;
+  --r-chip: 4px;
+  --r-pill: 999px;
+  --r-circle: 50%;
 
-  --shadow-panel:     0 16px 42px rgba(54, 42, 25, 0.16);
-  --shadow-popup:     0 18px 40px rgba(54, 42, 25, 0.20);
-  --shadow-marker:    0 2px 6px rgba(0, 0, 0, 0.30);
+  --bd-hair: 0.5px solid var(--bronze);
+  --bd-hair-soft: 1px solid var(--hairline);
+  --bd-marker: 2px solid #ffffff;
 
-  --blur-panel:       blur(8px);   /* backdrop-filter on top-nav, panels */
+  --shadow-panel: 0 16px 42px rgba(54, 42, 25, 0.16);
+  --shadow-popup: 0 18px 40px rgba(54, 42, 25, 0.20);
+  --shadow-marker: 0 2px 6px rgba(0, 0, 0, 0.30);
 
-  /* ── Motion ─────────────────────────────────────────────── */
-  --ease:             ease-in-out;
-  --dur-fast:         0.25s;   /* popup fade */
-  --dur-mid:          0.30s;   /* filter slide */
-  --dur-slow:         0.60s;   /* landing → map transition */
+  --blur-panel: blur(8px);
+  --ease: ease-in-out;
+  --dur-fast: 0.25s;
+  --dur-mid: 0.30s;
+  --dur-slow: 0.60s;
 
-  /* ── Spacing (used inside panels) ───────────────────────── */
-  --sp-1:  4px;
-  --sp-2:  8px;
-  --sp-3:  12px;
-  --sp-4:  14px;
-  --sp-5:  16px;
-  --sp-6:  20px;
-  --sp-7:  26px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 14px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 26px;
 
-  /* ── Layout chrome ──────────────────────────────────────── */
-  --nav-h:            48px;
-  --panel-w:          340px;
-  --legend-w:         160px;
-  --marker-d:         40px;
-  --slider-handle-w:  14px;
-  --slider-handle-h:  26px;
-  --slider-fill-h:    3px;
-  --tick-major:       14px;
-  --tick-minor:       7px;
-}
-
-/* ─────────────────────────────────────────────────────────────
- * Semantic element styles
- * ───────────────────────────────────────────────────────────── */
-
-.p-h1 {
-  font-family: var(--font-display), var(--font-zh);
-  font-size: var(--fs-h1-en);
-  font-style: italic;
-  font-weight: 900;
-  line-height: 0.95;
-  color: var(--ink);
-}
-.p-h1-zh {
-  font-family: var(--font-zh);
-  font-size: var(--fs-h1-zh);
-  font-weight: 900;
-  line-height: 0.95;
-  color: var(--ink);
-}
-
-.p-h2 {
-  font-family: var(--font-display), var(--font-zh);
-  font-size: var(--fs-h2-en);
-  font-style: italic;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--ink);
-}
-.p-h2-zh {
-  font-family: var(--font-zh);
-  font-size: var(--fs-h2-zh);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--ink);
-}
-
-.p-h3 {
-  font-family: var(--font-display);
-  font-size: var(--fs-h3-en);
-  font-style: italic;
-  font-weight: 700;
-  color: var(--ink);
-}
-.p-h3-zh {
-  font-family: var(--font-zh);
-  font-size: var(--fs-h3-zh);
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.p-body {
-  font-family: var(--font-body);
-  font-size: var(--fs-body-en);
-  font-weight: 400;
-  line-height: var(--lh-body);
-  color: var(--ink);
-}
-.p-body-zh {
-  font-family: var(--font-zh);
-  font-size: var(--fs-body-zh);
-  font-weight: 400;
-  line-height: var(--lh-body-zh);
-  color: var(--ink);
-}
-
-.p-small {
-  font-family: var(--font-body);
-  font-size: var(--fs-small);
-  letter-spacing: var(--ls-small);
-  color: var(--fg-soft);
-}
-.p-small-zh {
-  font-family: var(--font-zh);
-  font-size: var(--fs-small);
-  color: var(--fg-soft);
-}
-
-.p-brand-nav {
-  font-family: var(--font-display);
-  font-size: var(--fs-brand-nav);
-  font-style: italic;
-  font-weight: 700;
-  color: var(--parchment);
-}
-
-/* Panels & chrome shorthand --------------------------------- */
-.p-panel {
-  background: var(--paper-97);
-  border: var(--bd-hair);
-  border-radius: var(--r-panel);
-  box-shadow: var(--shadow-panel);
-  backdrop-filter: var(--blur-panel);
-  color: var(--ink);
-}
-.p-panel-header {
-  background: var(--ink);
-  color: var(--parchment);
-  border-bottom: var(--bd-hair);
-  border-radius: var(--r-panel) var(--r-panel) 0 0;
-}
-.p-chip {
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-pill);
-  background: rgba(255, 252, 246, 0.75);
-  color: var(--fg-soft);
-  padding: 2px 8px;
-  font-family: var(--font-body);
-  font-size: 14px;
-}
-.p-tag-bronze {
-  border: 0.5px solid var(--bronze);
-  border-radius: var(--r-chip);
-  background: var(--paper-96);
-  color: var(--ink);
-  padding: 2px 8px;
-  font-family: var(--font-body);
-  font-size: var(--fs-small);
-  letter-spacing: var(--ls-small);
+  --nav-h: 48px;
+  --panel-w: 340px;
+  --legend-w: 160px;
+  --marker-d: 40px;
+  --slider-handle-w: 14px;
+  --slider-handle-h: 26px;
+  --slider-fill-h: 3px;
+  --tick-major: 14px;
+  --tick-minor: 7px;
 }
