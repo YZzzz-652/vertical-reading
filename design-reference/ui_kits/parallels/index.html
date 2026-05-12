@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>Parallels · 经纬 — UI Kit</title>
+  <link rel="stylesheet" href="../../colors_and_type.css">
+  <link rel="stylesheet" href="app.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="events.js"></script>
+  <script src="books.js"></script>
+</head>
+<body>
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#F4ECD8"/>
+      <g transform="translate(50 50)" fill="none" stroke="#2C1A0E" stroke-width="1.6" stroke-linecap="round">
+        <circle r="22"/>
+        <ellipse rx="22" ry="9"/>
+        <ellipse rx="9" ry="22"/>
+        <path d="M-22 0 L22 0 M0 -22 L0 22"/>
+      </g>
+      <text x="50" y="86" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="11" fill="#2C1A0E">Parallels</text>
+    </svg>
+  </template>
+  <div id="root"></div>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel">
+    const { useState } = React;
+    function makeSet(arr){ return new Set(arr); }
+    function App(){
+      const [mapState, setMapState] = useState(false);
+      const [filterOpen, setFilterOpen] = useState(true);
+      const [mapVer, setMapVer] = useState("19th");
+      const [years, setYears] = useState([1700, 1930]);
+      const [selected, setSelected] = useState(null);
+      const [filters, setFilters] = useState({
+        classes: makeSet(CLASS_OPTIONS),
+        genders: makeSet(GENDER_OPTIONS),
+        timeTypes: makeSet(TIME_TYPE_OPTIONS),
+        locationTypes: makeSet(LOCATION_TYPE_OPTIONS),
+      });
+      function toggleFilter(key, value){
+        setFilters(curr => {
+          const next = new Set(curr[key]);
+          if (next.has(value)) next.delete(value); else next.add(value);
+          return { ...curr, [key]: next };
+        });
+      }
+      return (
+        <main className={"vr-app " + (mapState ? "is-map" : "is-landing")}>
+          <TopNav mapState={mapState} />
+          <Landing active={!mapState} onEnter={() => setMapState(true)} />
+          <MapStage
+            active={mapState}
+            events={window.PARALLELS_EVENTS}
+            onMarkerClick={setSelected}
+            filterOpen={filterOpen} setFilterOpen={setFilterOpen}
+            mapVer={mapVer} setMapVer={setMapVer}
+            filters={filters} toggleFilter={toggleFilter}
+            years={years} setYears={setYears}
+          />
+          <EventPopup event={selected} onClose={() => setSelected(null)} />
+        </main>
+      );
+    }
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
