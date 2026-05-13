@@ -219,6 +219,11 @@
 * 原因：今天把 design-reference 当"资产入库"处理（确认存在、commit、push 即完事），而非"重写阶段的设计契约"——应当读完每个文件、把它们之间的口径关系搞清楚、把和 v0.1 现有规范的冲突点全部列出来。在密集决策的对话末尾继续硬塞回答只会重复同样的盲区，留给下次完整对话集中处理更稳
 * 否定方案：在本次对话尾声直接尝试回答 19 个问题（疲劳决策、信息密度过载会重复今天的盲区）；让下次对话自然涌现这些问题（已证明会一路追问、效率低、易遗漏）
 
+**2026-05-13** · 阶段 3 前端重写完成
+* 决定：在 redesign 分支完成 Parallels 全套前端重写，对照 Claude Design Standalone HTML 实施。改动范围：tokens.css（补字体变量、新增 disc token、H1 字号 92px、删除 .p-* 段）、globals.css 重写、page.tsx 重构，新建 7 个组件（TopNav / Landing / MapStage / FilterPanel / EventsPanel / Timeline / EventPopup）和 3 个数据文件（books.ts / world-events.ts / types.ts）。本地构建（`npx next build --webpack`）、生产代码范围 ESLint（`npx eslint app --ext .ts,.tsx`）通过，浏览器走查通过。redesign 分支已 push，等待合并回 main 触发 Vercel 部署。
+* 原因：阶段 2 v0.1 的 globals.css 硬编码堆积，且与 Claude Design 新设计语言冲突；本次重写一次性对齐新设计，告别打补丁迁移。
+* 否定方案：无
+
 ---
 
 ## 流程决策
