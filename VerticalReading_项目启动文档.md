@@ -58,7 +58,7 @@
 ### 当前数据进度
 * **已完成：** 16 部，共 201 条，已写入飞书。具体书目和条数详见《VerticalReading_Database_启动文档.md》。
 * **待生产：** 其余 25 部
-* **真实世界 History 数据：** Claude Design 的新设计中地图页左侧含"真实世界 History" tab，需要历史事件数据。当前飞书表无此类数据，重写阶段需另行规划数据来源（候选方案：前端硬编码临时清单 / 新建飞书表 / 先做空 tab）—— 见「当前待办」相关条目
+* **真实世界 History 数据：** 地图页 EventsPanel 含 History tab，当前 `app/world-events.ts` 导出空数组，UI 显示「真实世界事件待录入 / History records pending」空状态。未来扩展见「当前待办」。
 
 ### 数据存储
 飞书多维表格，通过飞书开放API读取。
@@ -118,15 +118,14 @@
 → 6 张书封面图下载本地 public/covers/（commit 0a22669）
 → 设计 token 体系初次接入 app/tokens.css（commit 627874c）
 
-阶段 3 · 前端重写 ⏳ 进行中（redesign 分支）
-→ 在 redesign 分支重写前端，main 分支保持 v0.1 线上版本不动
-→ 保留：API 层、layout.tsx、icons、所有配置、所有 MD 文档
-→ 重写范围：app/globals.css、app/page.tsx，按 components.jsx 拆分组件
-→ 视觉参考：design-reference/screenshots/ 6 张截图
-→ 待规划：重写方案设计、批次顺序、组件拆分边界
+阶段 3 · 前端重写 ✅ 已完成
+→ 在 redesign 分支重写完成 Parallels 全套前端
+→ tokens.css 改造 + globals.css 重写 + page.tsx 重构 + 7 个新组件 + 3 个数据文件
+→ 本地构建与生产代码范围 ESLint 通过，浏览器走查通过
+→ 当前状态：redesign 分支已 push，待合并回 main 触发 Vercel 部署
 
 阶段 4 · 云端部署与上线 ⏳ 待开始
-→ 重写完成、redesign 合并回 main → Vercel 自动部署 → 验证线上可用
+→ redesign 合并回 main → Vercel 自动部署 → 验证线上可用
 ```
 
 ---
@@ -138,9 +137,8 @@
 3. 产品当前阶段供个人使用，不需要用户登录和权限系统
 4. 地图需支持全球范围，事件点分布在欧洲、亚洲、美洲
 5. 本地构建必须用 npx next build --webpack，不能用 npm run build（会走 Turbopack，OneDrive 路径下报错）
-6. CDN 资源：noUiSlider 使用 unpkg，jsDelivr 在当前环境加载失败
-7. Codex 预览窗口效果与浏览器实际效果不一致，验证效果以 localhost 浏览器为准
-8. Playfair Display 不含中文字形，所有中文必须使用 Noto Serif SC；英文标题保持 Playfair Display，两套字体共存
+6. Codex 预览窗口效果与浏览器实际效果不一致，验证效果以 localhost 浏览器为准
+7. Playfair Display 不含中文字形，所有中文必须使用 Noto Serif SC；英文标题保持 Playfair Display，两套字体共存
 
 ## 当前待办
 
@@ -153,67 +151,53 @@
 
 ---
 
-### ⏳ 前端重写方案设计
-- 提出：2026-05-12
-- 当前进度：阻塞解除，参考文档已建立，可开工
-- 上下文：前端重写参考文档（VerticalReading_前端重写参考.md）已归档，19 个基础口径全部锁定
+### ⏳ redesign 合并回 main 触发 Vercel 部署
+- 提出：2026-05-13
+- 当前进度：等待执行
+- 上下文：阶段 3 前端重写已完成，redesign 分支已 push。合并回 main 后 Vercel 自动部署，需在线上验证页面可用、飞书 API 拉数正常
 - 子任务：
-  - [ ] Codex 在 main 分支 `git checkout -b redesign` 建分支
-  - [ ] Claude 输出第一批重写指令（建议从 tokens.css 改造开始）
-  - [ ] 用户审批方案
-  - [ ] Codex 在 redesign 分支执行第一批
-  - [ ] 分批推进直至重写完成
-  - [ ] redesign 合并回 main → Vercel 自动部署
+  - [ ] Codex 在 main 分支执行 `git merge redesign`
+  - [ ] push 到 origin/main
+  - [ ] 等 Vercel 自动部署完成
+  - [ ] 浏览器打开 https://vertical-reading.vercel.app 走查首页 + 地图页
+  - [ ] 确认飞书 API 拉数正常、事件点显示正常
 - 优先级：近期
 - 阻塞：无
-- 下次接手提示：开新对话时上传 5 个 MD 文档 + 前端重写参考文档，Claude 输出 tokens.css 改造指令
+- 下次接手提示：合并后线上若出现差异（本地正常但线上异常），优先排查环境变量是否齐全
 
 ### 💡 扩展真实世界事件清单
 - 提出：2026-05-12
-- 当前进度：MVP 阶段用硬编码 15 条暂行，后续扩展
-- 上下文：components.jsx 已硬编码 15 条 WORLD_EVENTS，重写时移到 app/world-events.ts。当前数量够 MVP 用，但未来需要更丰富的历史事件覆盖
-- 子任务：
+- 当前进度：MVP 阶段用空状态 + 待录入提示，UI 已完成；world-events.ts 当前导出空数组，未来作为真实世界事件数据接入口
+- 上下文：地图页 EventsPanel 含「真实世界 History」tab，当前显示「真实世界事件待录入 / History records pending」空状态。未来需要历史事件数据填充
+- 子任务:
   - [ ] 决定历史事件覆盖时间段、规模
   - [ ] 决定数据存储方案（继续硬编码 / 新建飞书表）
   - [ ] 由谁产出（Claude / 用户手动）
   - [ ] 落地
-- 优先级：中期（不阻塞重写）
-- 阻塞:无
-- 下次接手提示：重写完成、有线上 MVP 之后再启动
-
-### 💡 首页书封面布局
-- 提出：2026-05-10
-- 当前进度：素材就绪，等重写时实施
-- 上下文：Claude Design 已确定布局（左 hero + 右六宫格书封面墙），6 本书已选定（Don Quixote / Alice / David Copperfield / Les Misérables / The Trial / Dream of the Red Chamber），封面图已下载到 public/covers/
-- 子任务：
-  - [x] 和 Claude Design 讨论候选方案
-  - [x] 确定展示哪 6 本书
-  - [x] 确定图片来源并下载本地
-  - [x] 确定排列方式（左右两栏 + 九宫格）
-  - [ ] 重写阶段实施（含 books.js 改引本地路径）
-- 优先级：近期
+- 优先级：中期（不阻塞上线）
 - 阻塞：无
-- 下次接手提示：重写阶段实施时把 books.js 的 cover 字段从 Wikimedia URL 改成 /covers/xxx.jpg
+- 下次接手提示：线上 MVP 跑起来之后再启动
 
 ### 💡 历史地图底图技术路径决策
 - 提出：2026-05-10
-- 当前进度：方向已定（手动选择，不与时间轴联动），技术实现待调研
-- 上下文：原计划是地图随时间轴自动切换不同年代历史地图，2026-05-12 改为用户手动选择。重写阶段先做 UI 框架（17/18/19/现代四个按钮可切换 active 状态，默认现代），按钮点击暂时无效果
-- 子任务：
+- 当前进度：方向已定（手动选择，不与时间轴联动），UI 框架已在 Atlas 面板实施（17/18/19/现代四个 tile 可切换 active 状态，默认现代），按钮点击暂时无切换底图效果
+- 上下文：原计划是地图随时间轴自动切换不同年代历史地图，2026-05-12 改为用户手动选择
+- 子任务:
   - [x] 决定不联动时间轴
+  - [x] UI 框架重写实施
   - [ ] 调研可用的历史地图底图源（自有素材 / 公开 tiles）
   - [ ] 评估免费方案能否接近真实历史疆域
   - [ ] 评估付费方案的成本
   - [ ] 决策技术路径
   - [ ] 接入按钮的真实切换逻辑
-- 优先级：中期（重写阶段先做 UI 框架，真实底图接入可后续）
+- 优先级：中期（UI 框架已就位，真实底图接入可独立推进）
 - 阻塞：无
-- 下次接手提示：UI 框架重写时一起做，真实底图调研可独立推进
+- 下次接手提示：可作为独立任务推进，与上线节奏解耦
 
 ### ⏳ 时间轴季度精度扩展
 - 提出：2026-05-10
 - 当前进度：已决定要做
-- 子任务：
+- 子任务:
   - [ ] 评估数据里能否提取/补充季度信息
   - [ ] 若数据可行，设计季度刻度的视觉与交互
   - [ ] Codex 实现
@@ -223,14 +207,8 @@
 
 ---
 
-**已废弃的待办**（重写后失效，不再追踪）：
-- ~~气泡卡片细节打磨~~（重写会覆盖现有气泡卡片，按 Claude Design 重做）
-- ~~筛选面板标题文字修改~~（FilterPanel 组件已决定删除）
-
----
-
-**状态摘要：** 💡 想法 3 条｜⏳ 进行中 2 条
-**优先级摘要：** 近期 3 条 · 中期 2 条 · 远期 0 条
+**状态摘要：** 💡 想法 2 条｜⏳ 进行中 2 条
+**优先级摘要：** 近期 1 条 · 中期 3 条 · 远期 0 条
 
 ## 已知问题与约束
 
@@ -245,7 +223,7 @@
 
 ### Turbopack 与 OneDrive 路径不兼容
 - 问题：项目存放在 OneDrive 目录下，Turbopack 报 native bindings 错误无法启动
-- 解决：本地启动必须使用 `npm run dev`（package.json 已固定 `next dev --webpack`）
+- 解决：本地启动必须使用 `npm run dev`（package.json 已固定 `next dev --webpack`），本地构建使用 `npx next build --webpack`
 - 记录日期：2026-04-26
 
 ### Codex 无法访问 Claude 环境路径
@@ -253,13 +231,8 @@
 - 解决：图片或文件素材需用户手动下载后放入项目 `public/` 目录，再由 Codex 引用
 - 记录日期：2026-05-10
 
-### CDN 资源选型
-- 问题：noUiSlider 通过 jsDelivr 加载在当前开发环境不稳定，会阻塞地图初始化
-- 解决：noUiSlider 改用 unpkg 加载
-- 记录日期：2026-05-10
-
-### globals.css 硬编码堆积
-- 问题：v0.1 阶段（commit 627874c 及之前）的 app/globals.css 含大量硬编码颜色（46 处）和硬编码字号/圆角/间距（45 处），未通过 CSS 变量系统管理；6 个 ink 派生色（#33271b、#2d241a、#5f4725、#3a2d20、#3b2d1c、#5a4525）和 1 个浅色 #e9e1cf 未纳入 token 体系
-- 解决：放弃打补丁迁移，整体推倒重写（见 2026-05-12 决策）；新代码所有视觉值通过 design-reference/colors_and_type.css 的 token 系统管理
-- 高危场景：未来如果发现 token 系统不够用要新增派生色，直接在 tokens.css 加并写进设计规范，不要回退到硬编码
+### globals.css 硬编码堆积（v0.1 遗留，阶段 3 重写已解决）
+- 问题：v0.1 阶段（commit 627874c 及之前）的 app/globals.css 含大量硬编码颜色（46 处）和硬编码字号/圆角/间距（45 处），未通过 CSS 变量系统管理
+- 解决：阶段 3 整体推倒重写，主要稳定视觉值通过 app/tokens.css 管理，组件局部状态值保留在 CSS 中；新增稳定设计值时优先补 token
+- 高危场景：未来如果发现 token 系统不够用要新增派生色，直接在 tokens.css 加，不要回退到硬编码
 - 记录日期：2026-05-12
