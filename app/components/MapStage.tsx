@@ -214,15 +214,15 @@ export function MapStage({
 
     async function loadHistoricalMap() {
       try {
-        const tileUrls = selectedMap.tileUrls;
         if (cancelled || historicalRequestRef.current !== requestId || !mapRef.current) return;
 
-        const nextLayers = tileUrls.map((tileUrl) =>
+        const nextLayers = selectedMap.layers.map((layer) =>
           leafletApi
-            .tileLayer(tileUrl, {
+            .tileLayer(layer.tileUrl, {
               opacity: 0.85,
+              minZoom: layer.minzoom,
               maxZoom: 20,
-              maxNativeZoom: 10,
+              maxNativeZoom: layer.maxzoom,
               zIndex: 240,
             })
             .addTo(mapRef.current!),
