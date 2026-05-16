@@ -103,9 +103,7 @@ function markerHtml(event: LiteraryEvent) {
 }
 
 type TileJsonResponse = {
-  success?: boolean;
-  tileUrl?: string;
-  error?: string;
+  tiles?: string[];
 };
 
 function removeLayers(layers: LeafletLayer[]) {
@@ -223,12 +221,12 @@ export function MapStage({
       const cached = historicalTileCacheRef.current.get(tileJsonUrl);
       if (cached) return cached;
 
-      const response = await fetch(`/api/tilejson?url=${encodeURIComponent(tileJsonUrl)}`, { cache: "force-cache" });
+      const response = await fetch(tileJsonUrl, { cache: "force-cache" });
       if (!response.ok) throw new Error(`TileJSON ${response.status}`);
 
       const data = (await response.json()) as TileJsonResponse;
-      const tileUrl = data.tileUrl;
-      if (!data.success || !tileUrl) throw new Error(data.error ?? "TileJSON missing tileUrl");
+      const tileUrl = data.tiles?.[0];
+      if (!tileUrl) throw new Error("TileJSON missing tiles[0]");
 
       historicalTileCacheRef.current.set(tileJsonUrl, tileUrl);
       return tileUrl;
