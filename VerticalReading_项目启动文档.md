@@ -56,8 +56,8 @@
 三种类型在时间轴和地图上用不同视觉样式区分，模糊性本身是产品特色。
 
 ### 当前数据进度
-* **已完成：** 16 部，共 201 条，已写入飞书。具体书目和条数详见《VerticalReading_Database_启动文档.md》。
-* **待生产：** 其余 25 部
+* **已完成：** 41 部全部完成，共 511 条，已写入飞书。具体书目和条数详见《VerticalReading_Database_启动文档.md》。
+* **待生产：** 无（数据生产阶段完结）
 * **真实世界 History 数据：** 地图页 EventsPanel 含 History tab，当前 `app/world-events.ts` 导出空数组，UI 显示「真实世界事件待录入 / History records pending」空状态。未来扩展见「当前待办」。
 
 ### 数据存储
@@ -123,6 +123,10 @@
 → tokens.css 改造 + globals.css 重写 + page.tsx 重构 + 7 个新组件 + 3 个数据文件
 → 本地构建与生产代码范围 ESLint 通过，浏览器走查通过
 → 当前状态：redesign 分支已 push，待合并回 main 触发 Vercel 部署
+
+数据生产 ✅ 已完成
+→ 41 部 / 511 条数据全量写入飞书（2026-05-14 完结）
+→ 数据库文档转入归档状态，后续仅在勘误或补录时维护
 
 阶段 4 · 云端部署与上线 ⏳ 待开始
 → redesign 合并回 main → Vercel 自动部署 → 验证线上可用
