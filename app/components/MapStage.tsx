@@ -106,10 +106,6 @@ function removeLayers(layers: LeafletLayer[]) {
   layers.forEach((layer) => layer.remove());
 }
 
-type TileJsonResponse = {
-  tiles?: string[];
-};
-
 type MapStageProps = {
   active: boolean;
   events: LiteraryEvent[];
@@ -145,7 +141,6 @@ export function MapStage({
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<LeafletMarker[]>([]);
   const historicalLayersRef = useRef<LeafletLayer[]>([]);
-  const historicalTileCacheRef = useRef<Map<string, string>>(new Map());
   const historicalRequestRef = useRef(0);
   const [leaflet, setLeaflet] = useState<LeafletModule | null>(null);
   const [query, setQuery] = useState("");
@@ -217,24 +212,9 @@ export function MapStage({
     const selectedMap = targetMap;
     let cancelled = false;
 
-    async function tileUrlFor(tileJsonUrl: string) {
-      const cached = historicalTileCacheRef.current.get(tileJsonUrl);
-      if (cached) return cached;
-
-      const response = await fetch(tileJsonUrl);
-      if (!response.ok) throw new Error(`TileJSON ${response.status}`);
-
-      const data = (await response.json()) as TileJsonResponse;
-      const tileUrl = data.tiles?.[0];
-      if (!tileUrl) throw new Error("TileJSON missing tiles[0]");
-
-      historicalTileCacheRef.current.set(tileJsonUrl, tileUrl);
-      return tileUrl;
-    }
-
     async function loadHistoricalMap() {
       try {
-        const tileUrls = await Promise.all(selectedMap.layers.map((tileJsonUrl) => tileUrlFor(tileJsonUrl)));
+        const tileUrls = selectedMap.tileUrls;
         if (cancelled || historicalRequestRef.current !== requestId || !mapRef.current) return;
 
         const nextLayers = tileUrls.map((tileUrl) =>
