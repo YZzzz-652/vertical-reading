@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { WORLD_EVENTS } from "../world-events";
+import { worldEvents } from "../world-events";
 import type { LiteraryEvent } from "../types";
+import type { WorldEvent } from "../world-events";
 
 type EventsPanelProps = {
   visible: LiteraryEvent[];
@@ -10,13 +11,27 @@ type EventsPanelProps = {
   onPick: (event: LiteraryEvent) => void;
 };
 
+const regionLabels: Record<WorldEvent["region"], string> = {
+  Europe: "欧洲",
+  Asia: "亚洲",
+  Americas: "美洲",
+  Africa: "非洲",
+};
+
 export function EventsPanel({ visible, years, onPick }: EventsPanelProps) {
   const [tab, setTab] = useState<"novels" | "world">("novels");
+  const [startYear, endYear] = years;
   const sorted = useMemo(
     () => [...visible].sort((a, b) => (a.year ?? 0) - (b.year ?? 0)),
     [visible],
   );
-  const worldRows = WORLD_EVENTS.filter((event) => event.year >= years[0] && event.year <= years[1]);
+  const worldRows = useMemo(
+    () =>
+      worldEvents
+        .filter((event) => event.year >= startYear && event.year <= endYear)
+        .sort((a, b) => a.year - b.year),
+    [startYear, endYear],
+  );
 
   return (
     <section className="vr-panel vr-events-panel">
@@ -72,10 +87,14 @@ export function EventsPanel({ visible, years, onPick }: EventsPanelProps) {
         ) : (
           <ul className="vr-events-list">
             {worldRows.map((event) => (
-              <li key={event.year} className="vr-event-row vr-event-row--world">
+              <li key={event.id} className="vr-event-row vr-event-row--world">
                 <div className="vr-event-year">{event.year}</div>
                 <div className="vr-event-meta">
-                  <div className="vr-event-desc">{event.label}</div>
+                  <div className="vr-event-character">
+                    <span className="vr-event-book">{regionLabels[event.region]} · </span>
+                    {event.title}
+                  </div>
+                  <div className="vr-event-desc">{event.description}</div>
                 </div>
               </li>
             ))}
