@@ -4,12 +4,12 @@ import {
   CLASS_OPTIONS,
   GENDER_OPTIONS,
   LOCATION_TYPE_OPTIONS,
-  MAP_VERSIONS,
   TIME_TYPE_OPTIONS,
   classIconSrc,
   type FilterState,
   type MapVersion,
 } from "../types";
+import { HISTORICAL_MAPS } from "../historical-maps";
 
 type FilterPanelProps = {
   filters: FilterState;
@@ -27,15 +27,17 @@ function MapVersionGroup({ value, onChange }: { value: MapVersion; onChange: (va
         地图年代 <em>Era</em>
       </legend>
       <div className="vr-mapver-row">
-        {MAP_VERSIONS.map((version) => (
+        {HISTORICAL_MAPS.map((version) => (
           <button
             key={version.id}
             type="button"
             className={`vr-mapver-tile ${version.id === value ? "is-on" : ""}`}
             onClick={() => onChange(version.id)}
           >
-            <span className="vr-mapver-tile-label">{version.label}</span>
-            <span className="vr-mapver-tile-caption">{version.caption}</span>
+            <span className="vr-mapver-tile-label">
+              {version.labelZh} <em>{version.labelEn}</em>
+            </span>
+            <span className="vr-mapver-tile-caption">{version.id === "modern" ? "OSM" : version.yearRange}</span>
           </button>
         ))}
       </div>

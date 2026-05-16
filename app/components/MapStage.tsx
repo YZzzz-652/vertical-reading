@@ -4,12 +4,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EventsPanel } from "./EventsPanel";
 import { FilterPanel } from "./FilterPanel";
 import { Timeline } from "./Timeline";
+import { historicalMapById } from "../historical-maps";
 import { classIconSrc, type FilterState, type LiteraryEvent, type MapVersion } from "../types";
 
 type LatLng = [number, number];
 type LeafletMarker = {
   addTo: (map: LeafletMap) => LeafletMarker;
   on: (event: string, callback: () => void) => LeafletMarker;
+  remove: () => void;
+};
+type LeafletLayer = {
+  addTo: (map: LeafletMap) => LeafletLayer;
   remove: () => void;
 };
 type LeafletMap = {
@@ -26,7 +31,7 @@ type LeafletModule = {
   tileLayer: (
     urlTemplate: string,
     options: Record<string, unknown>,
-  ) => { addTo: (map: LeafletMap) => void };
+  ) => LeafletLayer;
 };
 
 declare global {
@@ -97,6 +102,16 @@ function markerHtml(event: LiteraryEvent) {
   `;
 }
 
+type TileJsonResponse = {
+  success?: boolean;
+  tileUrl?: string;
+  error?: string;
+};
+
+function removeLayers(layers: LeafletLayer[]) {
+  layers.forEach((layer) => layer.remove());
+}
+
 type MapStageProps = {
   active: boolean;
   events: LiteraryEvent[];
@@ -131,6 +146,9 @@ export function MapStage({
   const mapEl = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<LeafletMarker[]>([]);
+  const historicalLayersRef = useRef<LeafletLayer[]>([]);
+  const historicalTileCacheRef = useRef<Map<string, string>>(new Map());
+  const historicalRequestRef = useRef(0);
   const [leaflet, setLeaflet] = useState<LeafletModule | null>(null);
   const [query, setQuery] = useState("");
   const [assetError, setAssetError] = useState("");
@@ -177,10 +195,74 @@ export function MapStage({
     mapRef.current = map;
 
     return () => {
+      removeLayers(historicalLayersRef.current);
+      historicalLayersRef.current = [];
       map.remove();
       mapRef.current = null;
     };
   }, [leaflet]);
+
+  useEffect(() => {
+    if (!leaflet || !mapRef.current) return;
+
+    const targetMap = historicalMapById(mapVer);
+    const requestId = historicalRequestRef.current + 1;
+    historicalRequestRef.current = requestId;
+
+    if (targetMap.id === "modern") {
+      removeLayers(historicalLayersRef.current);
+      historicalLayersRef.current = [];
+      return;
+    }
+
+    const leafletApi = leaflet;
+    const selectedMap = targetMap;
+    let cancelled = false;
+
+    async function tileUrlFor(tileJsonUrl: string) {
+      const cached = historicalTileCacheRef.current.get(tileJsonUrl);
+      if (cached) return cached;
+
+      const response = await fetch(`/api/tilejson?url=${encodeURIComponent(tileJsonUrl)}`, { cache: "force-cache" });
+      if (!response.ok) throw new Error(`TileJSON ${response.status}`);
+
+      const data = (await response.json()) as TileJsonResponse;
+      const tileUrl = data.tileUrl;
+      if (!data.success || !tileUrl) throw new Error(data.error ?? "TileJSON missing tileUrl");
+
+      historicalTileCacheRef.current.set(tileJsonUrl, tileUrl);
+      return tileUrl;
+    }
+
+    async function loadHistoricalMap() {
+      try {
+        const tileUrls = await Promise.all(selectedMap.layers.map((tileJsonUrl) => tileUrlFor(tileJsonUrl)));
+        if (cancelled || historicalRequestRef.current !== requestId || !mapRef.current) return;
+
+        const nextLayers = tileUrls.map((tileUrl) =>
+          leafletApi
+            .tileLayer(tileUrl, {
+              opacity: 0.85,
+              maxZoom: 20,
+              zIndex: 240,
+            })
+            .addTo(mapRef.current!),
+        );
+
+        removeLayers(historicalLayersRef.current);
+        historicalLayersRef.current = nextLayers;
+      } catch (error) {
+        if (!cancelled && historicalRequestRef.current === requestId) {
+          console.warn("Historical map layer failed to load", error);
+        }
+      }
+    }
+
+    loadHistoricalMap();
+    return () => {
+      cancelled = true;
+    };
+  }, [leaflet, mapVer]);
 
   useEffect(() => {
     if (active && mapRef.current) {

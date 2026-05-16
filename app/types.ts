@@ -32,7 +32,7 @@ export type WorldEvent = {
   label: string;
 };
 
-export type MapVersion = "17th" | "18th" | "19th" | "modern";
+export type { HistoricalMapId as MapVersion } from "./historical-maps";
 
 export const CLASS_OPTIONS = [
   "贵族",
@@ -51,13 +51,6 @@ export const LOCATION_TYPE_OPTIONS = ["真实", "虚构映射", "虚构无对应
 
 export const TIMELINE_START = 1700;
 export const TIMELINE_END = 1930;
-
-export const MAP_VERSIONS: { id: MapVersion; label: string; caption: string }[] = [
-  { id: "17th", label: "17世纪", caption: "1601-1700" },
-  { id: "18th", label: "18世纪", caption: "1701-1800" },
-  { id: "19th", label: "19世纪", caption: "1801-1900" },
-  { id: "modern", label: "现代", caption: "Today" },
-];
 
 export function makeFilterState(): FilterState {
   return {
