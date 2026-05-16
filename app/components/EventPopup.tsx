@@ -4,15 +4,19 @@ import type { LiteraryEvent } from "../types";
 
 type EventPopupProps = {
   event: LiteraryEvent | null;
+  atlasOpen: boolean;
   onClose: () => void;
 };
 
-export function EventPopup({ event, onClose }: EventPopupProps) {
+export function EventPopup({ event, atlasOpen, onClose }: EventPopupProps) {
   if (!event) return null;
 
   return (
-    <div className="vr-popup-overlay" onClick={onClose}>
-      <article className="vr-popup-card" onClick={(clickEvent) => clickEvent.stopPropagation()}>
+    <div className={`vr-popup-overlay ${atlasOpen ? "is-atlas-open" : "is-atlas-collapsed"}`}>
+      <article className="vr-popup-card">
+        <button type="button" className="vr-popup-close" aria-label="关闭气泡卡片" onClick={onClose}>
+          ×
+        </button>
         <header>
           <div className="vr-popup-title-row">
             <h2>{event.character || "未命名人物"}</h2>
@@ -31,6 +35,7 @@ export function EventPopup({ event, onClose }: EventPopupProps) {
         <p className="vr-popup-meta">
           地点：{event.locationName || event.city || "未知地点"} · {event.locationType || "未知地点类型"}
           　时间：{event.timeType || "未知时间类型"}
+          {event.year ? ` · ${event.year}` : ""}
         </p>
         <div className="vr-popup-rule" />
         <details className="vr-popup-quote" open>

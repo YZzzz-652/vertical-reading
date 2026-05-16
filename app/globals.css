@@ -28,8 +28,19 @@ button {
 }
 
 .vr-app {
+  --atlas-edge: 16px;
+  --atlas-gap: var(--sp-5);
+  --atlas-open-w: min(280px, 28vw);
+  --atlas-collapsed-w: 44px;
+  --atlas-dock-w: var(--atlas-open-w);
+  --atlas-dock-top: 64px;
   position: relative;
   min-height: 100vh;
+}
+
+.vr-app.is-atlas-collapsed {
+  --atlas-dock-w: var(--atlas-collapsed-w);
+  --atlas-dock-top: 126px;
 }
 
 .vr-top-nav {
@@ -516,7 +527,7 @@ button {
 .vr-left-dock,
 .vr-right-dock {
   position: absolute;
-  top: 64px;
+  top: var(--atlas-dock-top);
   bottom: 150px;
   z-index: 500;
   display: flex;
@@ -531,15 +542,15 @@ button {
 }
 
 .vr-right-dock {
-  right: 16px;
+  right: var(--atlas-edge);
   align-items: flex-end;
-  width: min(280px, 28vw);
+  width: var(--atlas-dock-w);
 }
 
 .vr-right-dock.is-collapsed {
   top: 126px;
   bottom: auto;
-  width: 44px;
+  width: var(--atlas-collapsed-w);
 }
 
 .vr-screen.is-active .vr-left-dock > *,
@@ -1090,12 +1101,16 @@ button {
 
 .vr-popup-overlay {
   position: fixed;
-  inset: 0;
+  top: var(--atlas-dock-top);
+  right: calc(var(--atlas-edge) + var(--atlas-dock-w) + var(--atlas-gap));
   z-index: 1100;
-  display: grid;
-  place-items: center;
-  background: rgba(44, 26, 14, 0.18);
+  pointer-events: none;
   animation: pop-fade var(--dur-fast) var(--ease);
+}
+
+.vr-popup-overlay.is-atlas-collapsed {
+  top: 126px;
+  right: calc(var(--atlas-edge) + var(--atlas-collapsed-w) + var(--atlas-gap));
 }
 
 @keyframes pop-fade {
@@ -1109,7 +1124,8 @@ button {
 }
 
 .vr-popup-card {
-  width: min(380px, calc(100vw - 48px));
+  position: relative;
+  width: min(380px, calc(100vw - var(--atlas-edge) - var(--atlas-dock-w) - var(--atlas-gap) - var(--atlas-edge)));
   padding: 16px 18px;
   border: var(--bd-hair);
   border-radius: var(--r-panel);
@@ -1117,6 +1133,26 @@ button {
   box-shadow: var(--shadow-popup);
   color: var(--fg-popup);
   font-family: var(--font-zh);
+  pointer-events: auto;
+}
+
+.vr-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: var(--r-circle);
+  background: transparent;
+  color: var(--fg-soft);
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.vr-popup-close:hover {
+  color: var(--ink);
 }
 
 .vr-popup-title-row {
@@ -1238,7 +1274,8 @@ button {
 
   .vr-left-dock,
   .vr-right-dock {
-    width: min(320px, calc(100vw - 32px));
+    --atlas-open-w: min(320px, calc(100vw - 32px));
+    width: var(--atlas-dock-w);
   }
 
   .vr-left-dock {
@@ -1270,9 +1307,9 @@ button {
   }
 
   .vr-right-dock {
-    right: 16px;
+    right: var(--atlas-edge);
     left: auto;
-    width: 44px;
+    width: var(--atlas-collapsed-w);
     transform: none;
   }
 

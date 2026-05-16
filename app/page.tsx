@@ -80,7 +80,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className={`vr-app ${mapState ? "is-map" : "is-landing"}`}>
+    <main className={`vr-app ${mapState ? "is-map" : "is-landing"} ${filterOpen ? "is-atlas-open" : "is-atlas-collapsed"}`}>
       <TopNav mapState={mapState} onHome={() => setMapState(false)} />
       <Landing active={!mapState} books={BOOKS} onEnter={() => setMapState(true)} />
       <MapStage
@@ -99,7 +99,7 @@ export default function Home() {
         mapVer={mapVer}
         setMapVer={setMapVer}
       />
-      <EventPopup event={selectedEvent} onClose={() => setSelectedEventId(null)} />
+      <EventPopup event={selectedEvent} atlasOpen={filterOpen} onClose={() => setSelectedEventId(null)} />
     </main>
   );
 }

@@ -34,10 +34,8 @@ function MapVersionGroup({ value, onChange }: { value: MapVersion; onChange: (va
             className={`vr-mapver-tile ${version.id === value ? "is-on" : ""}`}
             onClick={() => onChange(version.id)}
           >
-            <span className="vr-mapver-tile-label">
-              {version.labelZh} <em>{version.labelEn}</em>
-            </span>
-            <span className="vr-mapver-tile-caption">{version.id === "modern" ? "OSM" : version.yearRange}</span>
+            <span className="vr-mapver-tile-label">{version.id === "modern" ? "现代" : "20 世纪"}</span>
+            <span className="vr-mapver-tile-caption">{version.id === "modern" ? "Today" : "20th Century"}</span>
           </button>
         ))}
       </div>
