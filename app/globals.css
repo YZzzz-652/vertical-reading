@@ -420,6 +420,13 @@ button {
   border: 0;
 }
 
+.marker-selected {
+  border-radius: var(--r-circle);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.60),
+    0 0 12px 6px rgba(255, 255, 255, 0.35);
+}
+
 .vr-leaflet-marker {
   display: block;
   width: var(--marker-d);
@@ -857,11 +864,16 @@ button {
   border: 0;
   border-bottom: var(--bd-hair-soft);
   background: transparent;
+  cursor: pointer;
   text-align: left;
 }
 
 .vr-event-row:hover {
   background: rgba(200, 168, 122, 0.10);
+}
+
+.vr-event-row.is-selected {
+  background: var(--paper-93);
 }
 
 .vr-event-row--world {

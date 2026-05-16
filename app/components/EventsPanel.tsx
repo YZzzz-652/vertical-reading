@@ -8,6 +8,7 @@ import type { WorldEvent } from "../world-events";
 type EventsPanelProps = {
   visible: LiteraryEvent[];
   years: [number, number];
+  selectedEventId: string | null;
   onPick: (event: LiteraryEvent) => void;
 };
 
@@ -18,7 +19,7 @@ const regionLabels: Record<WorldEvent["region"], string> = {
   Africa: "非洲",
 };
 
-export function EventsPanel({ visible, years, onPick }: EventsPanelProps) {
+export function EventsPanel({ visible, years, selectedEventId, onPick }: EventsPanelProps) {
   const [tab, setTab] = useState<"novels" | "world">("novels");
   const [startYear, endYear] = years;
   const sorted = useMemo(
@@ -70,7 +71,11 @@ export function EventsPanel({ visible, years, onPick }: EventsPanelProps) {
           <ul className="vr-events-list">
             {sorted.map((event) => (
               <li key={event.id}>
-                <button type="button" className="vr-event-row" onClick={() => onPick(event)}>
+                <button
+                  type="button"
+                  className={`vr-event-row ${event.id === selectedEventId ? "is-selected" : ""}`}
+                  onClick={() => onPick(event)}
+                >
                   <div className="vr-event-year">{event.year}</div>
                   <div className="vr-event-meta">
                     <div className="vr-event-character">

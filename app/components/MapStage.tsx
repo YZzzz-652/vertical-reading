@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EventsPanel } from "./EventsPanel";
 import { FilterPanel } from "./FilterPanel";
 import { Timeline } from "./Timeline";
@@ -20,6 +20,8 @@ type LeafletLayer = {
 type LeafletMap = {
   remove: () => void;
   invalidateSize: () => void;
+  flyTo: (latlng: LatLng, zoom: number, options: Record<string, unknown>) => void;
+  getZoom: () => number;
 };
 type LeafletModule = {
   control: {
@@ -111,7 +113,8 @@ type MapStageProps = {
   events: LiteraryEvent[];
   loadError: string;
   isLoading: boolean;
-  onMarkerClick: (event: LiteraryEvent) => void;
+  selectedEventId: string | null;
+  onSelectEvent: (event: LiteraryEvent) => void;
   filterOpen: boolean;
   setFilterOpen: (open: boolean) => void;
   filters: FilterState;
@@ -127,7 +130,8 @@ export function MapStage({
   events,
   loadError,
   isLoading,
-  onMarkerClick,
+  selectedEventId,
+  onSelectEvent,
   filterOpen,
   setFilterOpen,
   filters,
@@ -266,6 +270,18 @@ export function MapStage({
     });
   }, [events, filters, query, years]);
 
+  const selectFromList = useCallback(
+    (event: LiteraryEvent) => {
+      onSelectEvent(event);
+      if (!mapRef.current || !Number.isFinite(event.lat) || !Number.isFinite(event.lng)) return;
+
+      mapRef.current.flyTo([event.lat!, event.lng!], mapRef.current.getZoom(), {
+        duration: 1.2,
+      });
+    },
+    [onSelectEvent],
+  );
+
   useEffect(() => {
     if (!leaflet || !mapRef.current) return;
 
@@ -276,16 +292,16 @@ export function MapStage({
         leaflet
           .marker([event.lat!, event.lng!], {
             icon: leaflet.divIcon({
-              className: "vr-div-icon",
+              className: `vr-div-icon ${event.id === selectedEventId ? "marker-selected" : ""}`,
               html: markerHtml(event),
               iconSize: [40, 40],
               iconAnchor: [20, 20],
             }),
           })
-          .on("click", () => onMarkerClick(event))
+          .on("click", () => onSelectEvent(event))
           .addTo(mapRef.current!),
       );
-  }, [leaflet, onMarkerClick, visible]);
+  }, [leaflet, onSelectEvent, selectedEventId, visible]);
 
   const status = isLoading ? "正在读取文学时空数据..." : loadError || assetError;
 
@@ -303,7 +319,7 @@ export function MapStage({
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-        <EventsPanel visible={visible} years={years} onPick={onMarkerClick} />
+        <EventsPanel visible={visible} years={years} selectedEventId={selectedEventId} onPick={selectFromList} />
       </div>
 
       <div className={`vr-right-dock ${filterOpen ? "" : "is-collapsed"}`}>

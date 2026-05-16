@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BOOKS } from "./books";
 import { EventPopup } from "./components/EventPopup";
 import { Landing } from "./components/Landing";
@@ -20,11 +20,18 @@ export default function Home() {
   const [events, setEvents] = useState<LiteraryEvent[]>([]);
   const [loadError, setLoadError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [selected, setSelected] = useState<LiteraryEvent | null>(null);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(true);
   const [mapVer, setMapVer] = useState<MapVersion>("modern");
   const [years, setYears] = useState<[number, number]>([TIMELINE_START, TIMELINE_END]);
   const [filters, setFilters] = useState<FilterState>(() => makeFilterState());
+  const selectedEvent = useMemo(
+    () => events.find((event) => event.id === selectedEventId) ?? null,
+    [events, selectedEventId],
+  );
+  const selectEvent = useCallback((event: LiteraryEvent) => {
+    setSelectedEventId(event.id);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,7 +88,8 @@ export default function Home() {
         events={events}
         loadError={loadError}
         isLoading={isLoading}
-        onMarkerClick={setSelected}
+        selectedEventId={selectedEventId}
+        onSelectEvent={selectEvent}
         filterOpen={filterOpen}
         setFilterOpen={setFilterOpen}
         filters={filters}
@@ -91,7 +99,7 @@ export default function Home() {
         mapVer={mapVer}
         setMapVer={setMapVer}
       />
-      <EventPopup event={selected} onClose={() => setSelected(null)} />
+      <EventPopup event={selectedEvent} onClose={() => setSelectedEventId(null)} />
     </main>
   );
 }
