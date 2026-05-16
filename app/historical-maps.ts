@@ -12,6 +12,7 @@ export type HistoricalMapOption = {
   labelEn: string;
   yearRange: string;
   layers: TileLayerConfig[];
+  hidden?: boolean;
 };
 
 export const HISTORICAL_MAPS: HistoricalMapOption[] = [
@@ -27,6 +28,7 @@ export const HISTORICAL_MAPS: HistoricalMapOption[] = [
     labelZh: "16世纪初",
     labelEn: "Early 1500s",
     yearRange: "1492–1624",
+    hidden: true,
     layers: [
       {
         tileUrl:
@@ -41,6 +43,7 @@ export const HISTORICAL_MAPS: HistoricalMapOption[] = [
     labelZh: "17世纪",
     labelEn: "17th Century",
     yearRange: "1625–1724",
+    hidden: true,
     layers: [
       {
         tileUrl:
@@ -67,6 +70,7 @@ export const HISTORICAL_MAPS: HistoricalMapOption[] = [
     labelZh: "18世纪",
     labelEn: "18th Century",
     yearRange: "1725–1829",
+    hidden: true,
     layers: [
       {
         tileUrl:
@@ -81,6 +85,7 @@ export const HISTORICAL_MAPS: HistoricalMapOption[] = [
     labelZh: "19世纪",
     labelEn: "19th Century",
     yearRange: "1830–1924",
+    hidden: true,
     layers: [
       {
         tileUrl:

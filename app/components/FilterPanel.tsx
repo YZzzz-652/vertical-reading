@@ -27,7 +27,7 @@ function MapVersionGroup({ value, onChange }: { value: MapVersion; onChange: (va
         地图年代 <em>Era</em>
       </legend>
       <div className="vr-mapver-row">
-        {HISTORICAL_MAPS.map((version) => (
+        {HISTORICAL_MAPS.filter((version) => !version.hidden).map((version) => (
           <button
             key={version.id}
             type="button"
