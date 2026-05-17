@@ -5,14 +5,15 @@ import type { LiteraryEvent } from "../types";
 type EventPopupProps = {
   event: LiteraryEvent | null;
   atlasOpen: boolean;
+  isClosing: boolean;
   onClose: () => void;
 };
 
-export function EventPopup({ event, atlasOpen, onClose }: EventPopupProps) {
+export function EventPopup({ event, atlasOpen, isClosing, onClose }: EventPopupProps) {
   if (!event) return null;
 
   return (
-    <div className={`vr-popup-overlay ${atlasOpen ? "is-atlas-open" : "is-atlas-collapsed"}`}>
+    <div className={`vr-popup-overlay ${atlasOpen ? "is-atlas-open" : "is-atlas-collapsed"} ${isClosing ? "is-closing" : ""}`}>
       <article className="vr-popup-card">
         <button type="button" className="vr-popup-close" aria-label="关闭气泡卡片" onClick={onClose}>
           ×

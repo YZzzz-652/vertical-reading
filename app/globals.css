@@ -84,6 +84,21 @@ button {
   pointer-events: auto;
 }
 
+.vr-screen .vr-left-dock > *,
+.vr-screen .vr-right-dock > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.vr-screen:not(.is-active) .vr-left-dock > *,
+.vr-screen:not(.is-active) .vr-right-dock > * {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
 .vr-landing {
   overflow: hidden;
   padding: calc(var(--nav-h) + 28px) 36px 36px;
@@ -591,6 +606,22 @@ button {
   flex-direction: column;
   width: 100%;
   min-height: 0;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.vr-filter-panel.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.98);
+}
+
+.vr-filter-panel.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .vr-filter-panel .vr-panel-body--scroll {
@@ -726,6 +757,23 @@ button {
   background: var(--ink);
   color: var(--parchment);
   box-shadow: var(--shadow-panel);
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.vr-filter-fab.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
+}
+
+.vr-filter-fab.is-visible {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .vr-filter-fab:hover {
@@ -1106,21 +1154,35 @@ button {
   top: var(--stage-dock-top);
   right: calc(var(--atlas-edge) + var(--atlas-dock-w) + var(--atlas-gap));
   z-index: 1100;
+  opacity: 1;
   pointer-events: none;
-  animation: pop-fade var(--dur-fast) var(--ease);
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease),
+    right var(--dur-fast) var(--ease);
+  animation: popup-enter var(--dur-fast) var(--ease);
 }
 
 .vr-popup-overlay.is-atlas-collapsed {
   right: calc(var(--atlas-edge) + var(--atlas-collapsed-w) + var(--atlas-gap));
 }
 
-@keyframes pop-fade {
+.vr-popup-overlay.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  animation: none;
+}
+
+@keyframes popup-enter {
   from {
     opacity: 0;
+    transform: translateY(8px) scale(0.98);
   }
 
   to {
     opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 

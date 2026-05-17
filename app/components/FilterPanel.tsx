@@ -177,36 +177,39 @@ function LocationTypeFilter({ selected, onToggle }: { selected: Set<string>; onT
 }
 
 export function FilterPanel({ filters, toggle, open, setOpen, mapVer, setMapVer }: FilterPanelProps) {
-  if (!open) {
-    return (
-      <button type="button" className="vr-filter-fab" aria-label="展开图志" onClick={() => setOpen(true)}>
+  return (
+    <>
+      <button
+        type="button"
+        className={`vr-filter-fab ${open ? "is-hidden" : "is-visible"}`}
+        aria-label="展开图志"
+        onClick={() => setOpen(true)}
+      >
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
           <path d="M12 3 L2 8.5 L12 14 L22 8.5 Z" />
           <path d="M2 12 L12 17.5 L22 12 L19.5 10.7 L12 14.7 L4.5 10.7 Z" />
           <path d="M2 15.5 L12 21 L22 15.5 L19.5 14.2 L12 18.2 L4.5 14.2 Z" />
         </svg>
       </button>
-    );
-  }
 
-  return (
-    <section className="vr-panel vr-filter-panel">
-      <header className="vr-panel-header">
-        <h2 className="vr-panel-h">
-          <span>图志</span>
-          <em>Atlas</em>
-        </h2>
-        <button type="button" aria-label="收起图志" onClick={() => setOpen(false)}>
-          ›
-        </button>
-      </header>
-      <div className="vr-panel-body vr-panel-body--scroll">
-        <MapVersionGroup value={mapVer} onChange={setMapVer} />
-        <ClassFilter selected={filters.classes} onToggle={(value) => toggle("classes", value)} />
-        <GenderFilter selected={filters.genders} onToggle={(value) => toggle("genders", value)} />
-        <TimeTypeFilter selected={filters.timeTypes} onToggle={(value) => toggle("timeTypes", value)} />
-        <LocationTypeFilter selected={filters.locationTypes} onToggle={(value) => toggle("locationTypes", value)} />
-      </div>
-    </section>
+      <section className={`vr-panel vr-filter-panel ${open ? "is-visible" : "is-hidden"}`}>
+        <header className="vr-panel-header">
+          <h2 className="vr-panel-h">
+            <span>图志</span>
+            <em>Atlas</em>
+          </h2>
+          <button type="button" aria-label="收起图志" onClick={() => setOpen(false)}>
+            ›
+          </button>
+        </header>
+        <div className="vr-panel-body vr-panel-body--scroll">
+          <MapVersionGroup value={mapVer} onChange={setMapVer} />
+          <ClassFilter selected={filters.classes} onToggle={(value) => toggle("classes", value)} />
+          <GenderFilter selected={filters.genders} onToggle={(value) => toggle("genders", value)} />
+          <TimeTypeFilter selected={filters.timeTypes} onToggle={(value) => toggle("timeTypes", value)} />
+          <LocationTypeFilter selected={filters.locationTypes} onToggle={(value) => toggle("locationTypes", value)} />
+        </div>
+      </section>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BOOKS } from "./books";
 import { EventPopup } from "./components/EventPopup";
 import { Landing } from "./components/Landing";
@@ -15,27 +15,50 @@ import {
   type MapVersion,
 } from "./types";
 
+const POPUP_EXIT_MS = 250;
+
 export default function Home() {
   const [mapState, setMapState] = useState(false);
   const [events, setEvents] = useState<LiteraryEvent[]>([]);
   const [loadError, setLoadError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [popupClosing, setPopupClosing] = useState(false);
   const [filterOpen, setFilterOpen] = useState(true);
   const [mapVer, setMapVer] = useState<MapVersion>("modern");
   const [years, setYears] = useState<[number, number]>([TIMELINE_START, TIMELINE_END]);
   const [filters, setFilters] = useState<FilterState>(() => makeFilterState());
+  const popupCloseTimerRef = useRef<number | null>(null);
   const selectedEvent = useMemo(
     () => events.find((event) => event.id === selectedEventId) ?? null,
     [events, selectedEventId],
   );
   const selectEvent = useCallback((event: LiteraryEvent) => {
+    if (popupCloseTimerRef.current) {
+      window.clearTimeout(popupCloseTimerRef.current);
+      popupCloseTimerRef.current = null;
+    }
+    setPopupClosing(false);
     setSelectedEventId(event.id);
   }, []);
+  const closeSelectedEvent = useCallback(() => {
+    if (!selectedEventId) return;
+
+    if (popupCloseTimerRef.current) {
+      window.clearTimeout(popupCloseTimerRef.current);
+    }
+
+    setPopupClosing(true);
+    popupCloseTimerRef.current = window.setTimeout(() => {
+      setSelectedEventId(null);
+      setPopupClosing(false);
+      popupCloseTimerRef.current = null;
+    }, POPUP_EXIT_MS);
+  }, [selectedEventId]);
   const goHome = useCallback(() => {
-    setSelectedEventId(null);
+    closeSelectedEvent();
     setMapState(false);
-  }, []);
+  }, [closeSelectedEvent]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +94,14 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (popupCloseTimerRef.current) {
+        window.clearTimeout(popupCloseTimerRef.current);
+      }
+    };
+  }, []);
+
   const toggleFilter = useCallback((key: keyof FilterState, value: string) => {
     setFilters((current) => {
       const next = new Set(current[key]);
@@ -103,7 +134,7 @@ export default function Home() {
         mapVer={mapVer}
         setMapVer={setMapVer}
       />
-      <EventPopup event={mapState ? selectedEvent : null} atlasOpen={filterOpen} onClose={() => setSelectedEventId(null)} />
+      <EventPopup event={selectedEvent} atlasOpen={filterOpen} isClosing={popupClosing} onClose={closeSelectedEvent} />
     </main>
   );
 }
