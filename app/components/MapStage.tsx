@@ -269,23 +269,44 @@ export function MapStage({
     bookFilterInitializedRef.current = true;
   }, [allBooks]);
 
+  const filteredEvents = useMemo(
+    () =>
+      events.filter(
+        (event) =>
+          filters.classes.has(event.class) &&
+          filters.genders.has(event.gender) &&
+          filters.timeTypes.has(event.timeType) &&
+          filters.locationTypes.has(event.locationType) &&
+          selectedBooks.has(event.book),
+      ),
+    [events, filters, selectedBooks],
+  );
+
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return events.filter((event) => {
+    return filteredEvents.filter((event) => {
       const year = event.year ?? 0;
       const text = `${event.book} ${event.author} ${event.character} ${event.event} ${event.locationName}`.toLowerCase();
       return (
-        filters.classes.has(event.class) &&
-        filters.genders.has(event.gender) &&
-        filters.timeTypes.has(event.timeType) &&
-        filters.locationTypes.has(event.locationType) &&
         year >= years[0] &&
         year <= years[1] &&
-        selectedBooks.has(event.book) &&
         (!needle || text.includes(needle))
       );
     });
-  }, [events, filters, query, selectedBooks, years]);
+  }, [filteredEvents, query, years]);
+
+  const visibleBookCount = useMemo(
+    () => new Set(visible.map((event) => event.book).filter(Boolean)).size,
+    [visible],
+  );
+
+  const timelineEventYears = useMemo(
+    () =>
+      filteredEvents
+        .map((event) => event.year)
+        .filter((year): year is number => Number.isFinite(year)),
+    [filteredEvents],
+  );
 
   const selectFromList = useCallback(
     (event: LiteraryEvent) => {
@@ -342,6 +363,7 @@ export function MapStage({
           selectedEventId={selectedEventId}
           allBooks={allBooks}
           selectedBooks={selectedBooks}
+          visibleBookCount={visibleBookCount}
           onPick={selectFromList}
           onBooksChange={setSelectedBooks}
         />
@@ -358,7 +380,7 @@ export function MapStage({
         />
       </div>
 
-      <Timeline years={years} setYears={setYears} />
+      <Timeline years={years} eventYears={timelineEventYears} setYears={setYears} />
 
       {status && <div className="vr-status">{status}</div>}
     </section>

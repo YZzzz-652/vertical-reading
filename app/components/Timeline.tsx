@@ -5,10 +5,11 @@ import { TIMELINE_END, TIMELINE_START } from "../types";
 
 type TimelineProps = {
   years: [number, number];
+  eventYears: number[];
   setYears: (years: [number, number] | ((current: [number, number]) => [number, number])) => void;
 };
 
-export function Timeline({ years, setYears }: TimelineProps) {
+export function Timeline({ years, eventYears, setYears }: TimelineProps) {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const ticks = useMemo(() => {
     const items = [];
@@ -54,6 +55,16 @@ export function Timeline({ years, setYears }: TimelineProps) {
 
   const startPct = ((years[0] - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
   const endPct = ((years[1] - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
+  const dots = useMemo(
+    () =>
+      eventYears
+        .filter((year) => year >= TIMELINE_START && year <= TIMELINE_END)
+        .map((year, index) => ({
+          id: `${year}-${index}`,
+          pos: ((year - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100,
+        })),
+    [eventYears],
+  );
 
   return (
     <section className="vr-timeline" aria-label="年份范围筛选">
@@ -89,6 +100,11 @@ export function Timeline({ years, setYears }: TimelineProps) {
             data-year={tick.major ? tick.year : undefined}
             style={{ left: `${tick.pos}%` }}
           />
+        ))}
+      </div>
+      <div className="vr-dots" aria-hidden="true">
+        {dots.map((dot) => (
+          <span key={dot.id} className="vr-dot" style={{ left: `${dot.pos}%` }} />
         ))}
       </div>
     </section>

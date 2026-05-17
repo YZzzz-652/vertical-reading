@@ -11,6 +11,7 @@ type EventsPanelProps = {
   selectedEventId: string | null;
   allBooks: string[];
   selectedBooks: Set<string>;
+  visibleBookCount: number;
   onPick: (event: LiteraryEvent) => void;
   onBooksChange: (books: Set<string>) => void;
 };
@@ -28,6 +29,7 @@ export function EventsPanel({
   selectedEventId,
   allBooks,
   selectedBooks,
+  visibleBookCount,
   onPick,
   onBooksChange,
 }: EventsPanelProps) {
@@ -141,7 +143,7 @@ export function EventsPanel({
             </span>
             <span className="vr-bookbar-trigger">
               <span className="vr-bookbar-count-zh">
-                <strong>{selectedBooks.size}</strong>
+                <strong>{visibleBookCount}</strong>
                 个文学世界
                 <span className="vr-bookbar-caret" aria-hidden="true">
                   ▾

@@ -449,8 +449,37 @@ button {
 .marker-selected {
   border-radius: var(--r-circle);
   box-shadow:
-    0 0 0 4px rgba(255, 255, 255, 0.60),
-    0 0 12px 6px rgba(255, 255, 255, 0.35);
+    0 0 0 3px rgba(245, 237, 216, 0.92),
+    0 0 0 5px rgba(200, 168, 122, 0.78),
+    0 0 14px 6px rgba(200, 168, 122, 0.55),
+    0 0 30px 12px rgba(200, 168, 122, 0.32),
+    0 4px 14px rgba(44, 26, 14, 0.42);
+  animation: marker-glow 2.6s var(--ease) infinite;
+}
+
+.marker-selected .vr-leaflet-marker {
+  border-color: rgba(255, 252, 246, 0.95);
+  filter: saturate(1.08) brightness(1.04);
+}
+
+@keyframes marker-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 3px rgba(245, 237, 216, 0.92),
+      0 0 0 5px rgba(200, 168, 122, 0.78),
+      0 0 14px 6px rgba(200, 168, 122, 0.55),
+      0 0 30px 12px rgba(200, 168, 122, 0.32),
+      0 4px 14px rgba(44, 26, 14, 0.42);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(245, 237, 216, 1),
+      0 0 0 5px rgba(200, 168, 122, 0.95),
+      0 0 22px 9px rgba(200, 168, 122, 0.70),
+      0 0 46px 18px rgba(200, 168, 122, 0.42),
+      0 4px 16px rgba(44, 26, 14, 0.50);
+  }
 }
 
 .vr-leaflet-marker {
@@ -1560,6 +1589,26 @@ button {
   white-space: nowrap;
   content: attr(data-year);
   transform: translateX(-50%);
+}
+
+.vr-dots {
+  position: absolute;
+  top: 7px;
+  right: 18px;
+  left: 18px;
+  z-index: 1;
+  height: 14px;
+  pointer-events: none;
+}
+
+.vr-dot {
+  position: absolute;
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: rgba(162, 58, 44, 0.42);
+  transform: translate(-50%, -50%);
+  will-change: opacity;
 }
 
 .vr-popup-overlay {
