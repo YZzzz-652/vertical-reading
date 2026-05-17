@@ -148,7 +148,17 @@ export function MapStage({
   const historicalRequestRef = useRef(0);
   const [leaflet, setLeaflet] = useState<LeafletModule | null>(null);
   const [query, setQuery] = useState("");
+  const [selectedBooks, setSelectedBooks] = useState<Set<string>>(() => new Set());
   const [assetError, setAssetError] = useState("");
+  const bookFilterInitializedRef = useRef(false);
+
+  const allBooks = useMemo(() => {
+    const books = new Set<string>();
+    events.forEach((event) => {
+      if (event.book) books.add(event.book);
+    });
+    return [...books];
+  }, [events]);
 
   useEffect(() => {
     let cancelled = false;
@@ -253,6 +263,12 @@ export function MapStage({
     }
   }, [active]);
 
+  useEffect(() => {
+    if (bookFilterInitializedRef.current || allBooks.length === 0) return;
+    setSelectedBooks(new Set(allBooks));
+    bookFilterInitializedRef.current = true;
+  }, [allBooks]);
+
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return events.filter((event) => {
@@ -265,10 +281,11 @@ export function MapStage({
         filters.locationTypes.has(event.locationType) &&
         year >= years[0] &&
         year <= years[1] &&
+        selectedBooks.has(event.book) &&
         (!needle || text.includes(needle))
       );
     });
-  }, [events, filters, query, years]);
+  }, [events, filters, query, selectedBooks, years]);
 
   const selectFromList = useCallback(
     (event: LiteraryEvent) => {
@@ -287,7 +304,7 @@ export function MapStage({
 
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = visible
-      .filter((event) => Number.isFinite(event.lat) && Number.isFinite(event.lng))
+      .filter((event) => selectedBooks.has(event.book) && Number.isFinite(event.lat) && Number.isFinite(event.lng))
       .map((event) =>
         leaflet
           .marker([event.lat!, event.lng!], {
@@ -301,7 +318,7 @@ export function MapStage({
           .on("click", () => onSelectEvent(event))
           .addTo(mapRef.current!),
       );
-  }, [leaflet, onSelectEvent, selectedEventId, visible]);
+  }, [leaflet, onSelectEvent, selectedBooks, selectedEventId, visible]);
 
   const status = isLoading ? "正在读取文学时空数据..." : loadError || assetError;
 
@@ -319,7 +336,15 @@ export function MapStage({
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-        <EventsPanel visible={visible} years={years} selectedEventId={selectedEventId} onPick={selectFromList} />
+        <EventsPanel
+          visible={visible}
+          years={years}
+          selectedEventId={selectedEventId}
+          allBooks={allBooks}
+          selectedBooks={selectedBooks}
+          onPick={selectFromList}
+          onBooksChange={setSelectedBooks}
+        />
       </div>
 
       <div className={`vr-right-dock ${filterOpen ? "" : "is-collapsed"}`}>
