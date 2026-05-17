@@ -5,7 +5,8 @@ const FEISHU_APP_SECRET = process.env.FEISHU_APP_SECRET!;
 const TABLE_ID = 'tbl30F3J3SBAawcN';
 const APP_TOKEN = 'GXuSb3quXaQGuos7C4ncGyMZn8e';
 
-type FeishuFields = Record<string, string | number | null | undefined>;
+type FeishuFieldValue = string | number | null | undefined | Array<string | { text?: string; name?: string }>;
+type FeishuFields = Record<string, FeishuFieldValue>;
 
 type FeishuRecord = {
   fields: FeishuFields;
@@ -56,6 +57,27 @@ async function fetchAllRecords(token: string): Promise<FeishuRecord[]> {
 
 function formatRecord(item: FeishuRecord) {
   const f = item.fields;
+  const normalizeMultiSelect = (value: FeishuFieldValue) => {
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => {
+          if (typeof item === 'string') return item;
+          return item.text ?? item.name ?? '';
+        })
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+      return value
+        .split(/[,，、]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  };
+
   return {
     id: f['唯一ID'] ?? '',
     book: f['书名'] ?? '',
@@ -76,6 +98,7 @@ function formatRecord(item: FeishuRecord) {
     lng: f['经度'] ? Number(f['经度']) : null,
     lat: f['纬度'] ? Number(f['纬度']) : null,
     locationType: f['地点类型'] ?? '',
+    eventTypes: normalizeMultiSelect(f['事件类型']),
   };
 }
 

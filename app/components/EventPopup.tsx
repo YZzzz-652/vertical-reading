@@ -27,14 +27,28 @@ export function EventPopup({ event, atlasOpen, isClosing, onClose }: EventPopupP
           </div>
           <p>
             <em>
-              {event.book || "未知作品"} · {event.author || "未知作者"}
+              《{event.book || "未知作品"}》{event.author || "未知作者"}
             </em>
           </p>
         </header>
         <div className="vr-popup-rule" />
         <p className="vr-popup-event">{event.event || "暂无事件描述"}</p>
+        {event.eventTypes.length > 0 && (
+          <div className="vr-popup-evtype">
+            <span className="vr-popup-evtype-label">事件类型：</span>
+            {event.eventTypes.map((type) => (
+              <span key={type} className="vr-popup-evtype-tag">
+                <svg viewBox="0 0 28 28" aria-hidden="true">
+                  <path d="M8 9Q11 6 14 9Q17 6 20 9Q22 12 14 19Q6 12 8 9Z" />
+                  <path d="M8 21h12" />
+                </svg>
+                {type}
+              </span>
+            ))}
+          </div>
+        )}
         <p className="vr-popup-meta">
-          地点：{event.locationName || event.city || "未知地点"} · {event.locationType || "未知地点类型"}
+          地点：{event.locationType || "未知地点类型"} · {event.locationName || event.city || "未知地点"}
           　时间：{event.timeType || "未知时间类型"}
           {event.year ? ` · ${event.year}` : ""}
         </p>

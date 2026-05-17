@@ -277,6 +277,7 @@ export function MapStage({
           filters.genders.has(event.gender) &&
           filters.timeTypes.has(event.timeType) &&
           filters.locationTypes.has(event.locationType) &&
+          (filters.eventTypes.size === 0 || event.eventTypes.some((type) => filters.eventTypes.has(type))) &&
           selectedBooks.has(event.book),
       ),
     [events, filters, selectedBooks],

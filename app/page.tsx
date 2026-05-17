@@ -7,6 +7,7 @@ import { Landing } from "./components/Landing";
 import { MapStage } from "./components/MapStage";
 import { TopNav } from "./components/TopNav";
 import {
+  EVENT_TYPE_GROUPS,
   TIMELINE_END,
   TIMELINE_START,
   makeFilterState,
@@ -119,6 +120,20 @@ export default function Home() {
 
   const toggleFilter = useCallback((key: keyof FilterState, value: string) => {
     setFilters((current) => {
+      if (key === "eventTypes") {
+        const next = new Set(current.eventTypes);
+        const group = EVENT_TYPE_GROUPS.find(([left, right]) => left === value || right === value);
+        if (!group) return current;
+
+        const wasSelected = next.has(value);
+        next.delete(group[0]);
+        next.delete(group[1]);
+        if (!wasSelected) {
+          next.add(value);
+        }
+        return { ...current, eventTypes: next };
+      }
+
       const next = new Set(current[key]);
       if (next.has(value)) {
         next.delete(value);

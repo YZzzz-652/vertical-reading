@@ -2,6 +2,7 @@
 
 import {
   CLASS_OPTIONS,
+  EVENT_TYPE_GROUPS,
   GENDER_OPTIONS,
   LOCATION_TYPE_OPTIONS,
   TIME_TYPE_OPTIONS,
@@ -99,6 +100,69 @@ function GenderFilter({ selected, onToggle }: { selected: Set<string>; onToggle:
         })}
       </div>
     </fieldset>
+  );
+}
+
+function EventTypeFilter({ selected, onToggle }: { selected: Set<string>; onToggle: (value: string) => void }) {
+  return (
+    <fieldset className="vr-filter-group">
+      <legend>
+        事件类型 <em>Event Type</em>
+      </legend>
+      <div className="vr-axis-grid">
+        {EVENT_TYPE_GROUPS.map(([left, right]) => {
+          const leftOn = selected.has(left);
+          const rightOn = selected.has(right);
+          const axisClass = leftOn ? "is-left" : rightOn ? "is-right" : "";
+          return (
+            <div key={`${left}-${right}`} className={`vr-axis ${axisClass}`} role="group" aria-label={`${left} 或 ${right}`}>
+              <button
+                type="button"
+                className="vr-axis-end"
+                aria-pressed={leftOn}
+                aria-label={`筛选${left}`}
+                onClick={() => onToggle(left)}
+              >
+                <EventTypeGlyph />
+                <span>{left}</span>
+              </button>
+              <button
+                type="button"
+                className="vr-axis-track"
+                aria-label={`${left} / ${right} 不参与筛选`}
+                onClick={() => {
+                  if (leftOn) onToggle(left);
+                  if (rightOn) onToggle(right);
+                }}
+              >
+                <span className="vr-axis-line" />
+                <span className="vr-axis-fill" />
+                <span className="vr-axis-handle" />
+              </button>
+              <button
+                type="button"
+                className="vr-axis-end"
+                aria-pressed={rightOn}
+                aria-label={`筛选${right}`}
+                onClick={() => onToggle(right)}
+              >
+                <EventTypeGlyph />
+                <span>{right}</span>
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function EventTypeGlyph() {
+  return (
+    <svg viewBox="0 0 28 28" aria-hidden="true">
+      <path d="M8 9Q11 6 14 9Q17 6 20 9Q22 12 14 19Q6 12 8 9Z" />
+      <path d="M8 21h12" />
+    </svg>
   );
 }
 
@@ -205,6 +269,7 @@ export function FilterPanel({ filters, toggle, open, setOpen, mapVer, setMapVer 
         <div className="vr-panel-body vr-panel-body--scroll">
           <MapVersionGroup value={mapVer} onChange={setMapVer} />
           <ClassFilter selected={filters.classes} onToggle={(value) => toggle("classes", value)} />
+          <EventTypeFilter selected={filters.eventTypes} onToggle={(value) => toggle("eventTypes", value)} />
           <GenderFilter selected={filters.genders} onToggle={(value) => toggle("genders", value)} />
           <TimeTypeFilter selected={filters.timeTypes} onToggle={(value) => toggle("timeTypes", value)} />
           <LocationTypeFilter selected={filters.locationTypes} onToggle={(value) => toggle("locationTypes", value)} />
