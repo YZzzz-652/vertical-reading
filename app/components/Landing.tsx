@@ -38,10 +38,15 @@ function BookCard({ book }: { book: BookCover }) {
 type LandingProps = {
   active: boolean;
   books: BookCover[];
+  stats: {
+    novels: number | null;
+    regions: number | null;
+    yearRange: string | null;
+  };
   onEnter: () => void;
 };
 
-export function Landing({ active, books, onEnter }: LandingProps) {
+export function Landing({ active, books, stats, onEnter }: LandingProps) {
   return (
     <section className={`vr-screen vr-landing ${active ? "is-active" : ""}`}>
       <div className="vr-landing-grid">
@@ -70,15 +75,15 @@ export function Landing({ active, books, onEnter }: LandingProps) {
           </button>
           <div className="vr-landing-stats">
             <div>
-              <strong>{books.length}</strong>
-              <span>Featured</span>
+              <strong>{stats.novels ?? "..."}</strong>
+              <span>Novels</span>
             </div>
             <div>
-              <strong>7</strong>
+              <strong>{stats.regions ?? "..."}</strong>
               <span>Regions</span>
             </div>
             <div>
-              <strong>1010-1936</strong>
+              <strong>{stats.yearRange ?? "..."}</strong>
               <span>Years</span>
             </div>
           </div>

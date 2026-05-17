@@ -33,6 +33,21 @@ export default function Home() {
     () => events.find((event) => event.id === selectedEventId) ?? null,
     [events, selectedEventId],
   );
+  const landingStats = useMemo(() => {
+    const novels = new Set(events.map((event) => event.book).filter(Boolean)).size;
+    const regions = new Set(events.map((event) => event.region).filter(Boolean)).size;
+    const eventYears = events
+      .map((event) => event.year)
+      .filter((year): year is number => Number.isFinite(year));
+    const minYear = eventYears.length > 0 ? Math.min(...eventYears) : null;
+    const maxYear = eventYears.length > 0 ? Math.max(...eventYears) : null;
+
+    return {
+      novels: novels || null,
+      regions: regions || null,
+      yearRange: minYear !== null && maxYear !== null ? `${minYear} - ${maxYear}` : null,
+    };
+  }, [events]);
   const selectEvent = useCallback((event: LiteraryEvent) => {
     if (popupCloseTimerRef.current) {
       window.clearTimeout(popupCloseTimerRef.current);
@@ -117,7 +132,7 @@ export default function Home() {
   return (
     <main className={`vr-app ${mapState ? "is-map" : "is-landing"} ${filterOpen ? "is-atlas-open" : "is-atlas-collapsed"}`}>
       <TopNav mapState={mapState} onHome={goHome} />
-      <Landing active={!mapState} books={BOOKS} onEnter={() => setMapState(true)} />
+      <Landing active={!mapState} books={BOOKS} stats={landingStats} onEnter={() => setMapState(true)} />
       <MapStage
         active={mapState}
         events={events}
