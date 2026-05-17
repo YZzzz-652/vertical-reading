@@ -13,6 +13,10 @@
 # testing
 /coverage
 
+# local map tile experiments
+/geotiff-test/
+/public/historical-tiles/
+
 # next.js
 /.next/
 /out/
