@@ -32,6 +32,10 @@ export default function Home() {
   const selectEvent = useCallback((event: LiteraryEvent) => {
     setSelectedEventId(event.id);
   }, []);
+  const goHome = useCallback(() => {
+    setSelectedEventId(null);
+    setMapState(false);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,7 +85,7 @@ export default function Home() {
 
   return (
     <main className={`vr-app ${mapState ? "is-map" : "is-landing"} ${filterOpen ? "is-atlas-open" : "is-atlas-collapsed"}`}>
-      <TopNav mapState={mapState} onHome={() => setMapState(false)} />
+      <TopNav mapState={mapState} onHome={goHome} />
       <Landing active={!mapState} books={BOOKS} onEnter={() => setMapState(true)} />
       <MapStage
         active={mapState}
@@ -99,7 +103,7 @@ export default function Home() {
         mapVer={mapVer}
         setMapVer={setMapVer}
       />
-      <EventPopup event={selectedEvent} atlasOpen={filterOpen} onClose={() => setSelectedEventId(null)} />
+      <EventPopup event={mapState ? selectedEvent : null} atlasOpen={filterOpen} onClose={() => setSelectedEventId(null)} />
     </main>
   );
 }
