@@ -126,97 +126,101 @@ export function EventsPanel({
           <em>History</em>
         </button>
       </nav>
+      {tab === "novels" && (
+        <div className="vr-bookfilter">
+          <button
+            type="button"
+            className="vr-bookbar"
+            aria-haspopup="dialog"
+            aria-expanded={bookPickerOpen}
+            onClick={openBookPicker}
+          >
+            <span className="vr-bookbar-lead">
+              我想探索
+              <em>To Explore</em>
+            </span>
+            <span className="vr-bookbar-trigger">
+              <span className="vr-bookbar-count-zh">
+                <strong>{selectedBooks.size}</strong>
+                个文学世界
+                <span className="vr-bookbar-caret" aria-hidden="true">
+                  ▾
+                </span>
+              </span>
+              <span className="vr-bookbar-count-en">Literary Worlds</span>
+            </span>
+          </button>
+          <div className={`vr-bookpop ${bookPickerOpen ? "is-open" : ""}`} role="dialog" aria-label="选择书目">
+            <div className="vr-bookpop-head">
+              <label className="vr-bookpop-search">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+                  <circle cx="6" cy="6" r="4.2" />
+                  <path d="M9.2 9.2 L12 12" />
+                </svg>
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={bookQuery}
+                  placeholder="检索书名 · Search by title"
+                  onChange={(event) => setBookQuery(event.target.value)}
+                />
+              </label>
+              <button
+                type="button"
+                className="vr-bookpop-toggle"
+                aria-label={allDraftSelected ? "全不选" : "全选"}
+                title={allDraftSelected ? "全不选 · Clear all" : "全选 · Select all"}
+                onClick={toggleAllBooks}
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={allDraftSelected ? "1.1" : "1.3"}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
+                  {!allDraftSelected && <polyline points="4.8,8.2 7.2,10.4 11.4,5.4" />}
+                </svg>
+              </button>
+            </div>
+            <div className="vr-bookpop-status">
+              <span className="vr-bookpop-status-count">
+                已选<strong>{draftBooks.size}</strong>/<span>{allBooks.length}</span>本
+              </span>
+              <span>
+                <em>Library Catalog</em>
+              </span>
+            </div>
+            <div className="vr-bookpop-list">
+              {filteredBooks.map((book) => (
+                <label key={book} className="vr-bookpop-item">
+                  <input
+                    type="checkbox"
+                    checked={draftBooks.has(book)}
+                    onChange={() => toggleDraftBook(book)}
+                  />
+                  <span className="vr-bookpop-box" />
+                  <span className="vr-bookpop-text">
+                    <span className="vr-bookpop-title">《{book}》</span>
+                  </span>
+                </label>
+              ))}
+              {filteredBooks.length === 0 && <div className="vr-bookpop-empty">未找到匹配书目 · No match</div>}
+            </div>
+            <div className="vr-bookpop-foot">
+              <button type="button" className="vr-bookpop-confirm" onClick={confirmBooks}>
+                完成 Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="vr-events-body">
         {tab === "novels" ? (
           <>
-            <button
-              type="button"
-              className="vr-bookbar"
-              aria-haspopup="dialog"
-              aria-expanded={bookPickerOpen}
-              onClick={openBookPicker}
-            >
-              <span className="vr-bookbar-lead">
-                我想探索
-                <em>To Explore</em>
-              </span>
-              <span className="vr-bookbar-trigger">
-                <span className="vr-bookbar-count-zh">
-                  <strong>{selectedBooks.size}</strong>
-                  个文学世界
-                  <span className="vr-bookbar-caret" aria-hidden="true">
-                    ▾
-                  </span>
-                </span>
-                <span className="vr-bookbar-count-en">Literary Worlds</span>
-              </span>
-            </button>
-            <div className={`vr-bookpop ${bookPickerOpen ? "is-open" : ""}`} role="dialog" aria-label="选择书目">
-              <div className="vr-bookpop-head">
-                <label className="vr-bookpop-search">
-                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
-                    <circle cx="6" cy="6" r="4.2" />
-                    <path d="M9.2 9.2 L12 12" />
-                  </svg>
-                  <input
-                    ref={searchRef}
-                    type="text"
-                    value={bookQuery}
-                    placeholder="检索书名 · Search by title"
-                    onChange={(event) => setBookQuery(event.target.value)}
-                  />
-                </label>
-                <button
-                  type="button"
-                  className="vr-bookpop-toggle"
-                  aria-label={allDraftSelected ? "全不选" : "全选"}
-                  title={allDraftSelected ? "全不选 · Clear all" : "全选 · Select all"}
-                  onClick={toggleAllBooks}
-                >
-                  <svg
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={allDraftSelected ? "1.1" : "1.3"}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
-                    {!allDraftSelected && <polyline points="4.8,8.2 7.2,10.4 11.4,5.4" />}
-                  </svg>
-                </button>
-              </div>
-              <div className="vr-bookpop-status">
-                <span className="vr-bookpop-status-count">
-                  已选<strong>{draftBooks.size}</strong>/<span>{allBooks.length}</span>本
-                </span>
-                <span>
-                  <em>Library Catalog</em>
-                </span>
-              </div>
-              <div className="vr-bookpop-list">
-                {filteredBooks.map((book) => (
-                  <label key={book} className="vr-bookpop-item">
-                    <input
-                      type="checkbox"
-                      checked={draftBooks.has(book)}
-                      onChange={() => toggleDraftBook(book)}
-                    />
-                    <span className="vr-bookpop-box" />
-                    <span className="vr-bookpop-text">
-                      <span className="vr-bookpop-title">《{book}》</span>
-                    </span>
-                  </label>
-                ))}
-                {filteredBooks.length === 0 && <div className="vr-bookpop-empty">未找到匹配书目 · No match</div>}
-              </div>
-              <div className="vr-bookpop-foot">
-                <button type="button" className="vr-bookpop-confirm" onClick={confirmBooks}>
-                  完成 Done
-                </button>
-              </div>
-            </div>
             <ul className="vr-events-list">
               {sorted.map((event) => (
                 <li key={event.id}>

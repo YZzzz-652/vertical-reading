@@ -869,6 +869,7 @@ button {
   width: 100%;
   min-height: 0;
   max-height: 100%;
+  overflow: visible;
 }
 
 .vr-events-tabs {
@@ -922,10 +923,13 @@ button {
   font-family: var(--font-zh);
 }
 
+.vr-bookfilter {
+  position: relative;
+  z-index: 6;
+  flex: 0 0 auto;
+}
+
 .vr-bookbar {
-  position: sticky;
-  top: 0;
-  z-index: 4;
   display: flex;
   width: 100%;
   gap: 12px;
@@ -1041,7 +1045,7 @@ button {
 
 .vr-bookpop {
   position: absolute;
-  top: 47px;
+  top: 100%;
   right: 0;
   left: 0;
   z-index: 8;
