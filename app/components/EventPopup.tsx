@@ -1,6 +1,7 @@
 "use client";
 
 import type { LiteraryEvent } from "../types";
+import { EventTypeGlyph } from "./EventTypeGlyph";
 
 type EventPopupProps = {
   event: LiteraryEvent | null;
@@ -38,10 +39,7 @@ export function EventPopup({ event, atlasOpen, isClosing, onClose }: EventPopupP
             <span className="vr-popup-evtype-label">事件类型：</span>
             {event.eventTypes.map((type) => (
               <span key={type} className="vr-popup-evtype-tag">
-                <svg viewBox="0 0 28 28" aria-hidden="true">
-                  <path d="M8 9Q11 6 14 9Q17 6 20 9Q22 12 14 19Q6 12 8 9Z" />
-                  <path d="M8 21h12" />
-                </svg>
+                <EventTypeGlyph type={type} />
                 {type}
               </span>
             ))}

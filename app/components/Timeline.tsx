@@ -1,30 +1,32 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { TIMELINE_END, TIMELINE_START } from "../types";
 
 type TimelineProps = {
   years: [number, number];
+  bounds: [number, number];
   eventYears: number[];
   setYears: (years: [number, number] | ((current: [number, number]) => [number, number])) => void;
 };
 
-export function Timeline({ years, eventYears, setYears }: TimelineProps) {
+export function Timeline({ years, bounds, eventYears, setYears }: TimelineProps) {
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const [minYear, maxYear] = bounds;
+  const span = Math.max(1, maxYear - minYear);
   const ticks = useMemo(() => {
     const items = [];
-    for (let year = TIMELINE_START; year <= TIMELINE_END; year += 10) {
+    for (let year = minYear; year <= maxYear; year += 10) {
       items.push({
         year,
-        major: (year - TIMELINE_START) % 50 === 0,
-        pos: ((year - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100,
+        major: (year - minYear) % 50 === 0,
+        pos: ((year - minYear) / span) * 100,
       });
     }
     return items;
-  }, []);
+  }, [maxYear, minYear, span]);
 
   function pctToYear(pct: number) {
-    return Math.round(TIMELINE_START + (pct / 100) * (TIMELINE_END - TIMELINE_START));
+    return Math.round(minYear + (pct / 100) * span);
   }
 
   function onDown(which: 0 | 1) {
@@ -53,17 +55,17 @@ export function Timeline({ years, eventYears, setYears }: TimelineProps) {
     };
   }
 
-  const startPct = ((years[0] - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
-  const endPct = ((years[1] - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
+  const startPct = Math.max(0, Math.min(100, ((years[0] - minYear) / span) * 100));
+  const endPct = Math.max(0, Math.min(100, ((years[1] - minYear) / span) * 100));
   const dots = useMemo(
     () =>
       eventYears
-        .filter((year) => year >= TIMELINE_START && year <= TIMELINE_END)
+        .filter((year) => year >= minYear && year <= maxYear)
         .map((year, index) => ({
           id: `${year}-${index}`,
-          pos: ((year - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100,
+          pos: ((year - minYear) / span) * 100,
         })),
-    [eventYears],
+    [eventYears, maxYear, minYear, span],
   );
 
   return (
@@ -75,7 +77,7 @@ export function Timeline({ years, eventYears, setYears }: TimelineProps) {
           className="vr-handle"
           role="slider"
           tabIndex={0}
-          aria-valuemin={TIMELINE_START}
+          aria-valuemin={minYear}
           aria-valuemax={years[1] - 5}
           aria-valuenow={years[0]}
           style={{ left: `calc(${startPct}% - 7px)` }}
@@ -86,7 +88,7 @@ export function Timeline({ years, eventYears, setYears }: TimelineProps) {
           role="slider"
           tabIndex={0}
           aria-valuemin={years[0] + 5}
-          aria-valuemax={TIMELINE_END}
+          aria-valuemax={maxYear}
           aria-valuenow={years[1]}
           style={{ left: `calc(${endPct}% - 7px)` }}
           onPointerDown={onDown(1)}

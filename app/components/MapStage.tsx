@@ -151,6 +151,7 @@ export function MapStage({
   const [selectedBooks, setSelectedBooks] = useState<Set<string>>(() => new Set());
   const [assetError, setAssetError] = useState("");
   const bookFilterInitializedRef = useRef(false);
+  const timelineInitializedRef = useRef(false);
 
   const allBooks = useMemo(() => {
     const books = new Set<string>();
@@ -158,6 +159,17 @@ export function MapStage({
       if (event.book) books.add(event.book);
     });
     return [...books];
+  }, [events]);
+
+  const timelineBounds = useMemo<[number, number]>(() => {
+    const eventYears = events
+      .map((event) => event.year)
+      .filter((year): year is number => Number.isFinite(year));
+    if (eventYears.length === 0) return [1700, 1930];
+
+    const minYear = Math.floor(Math.min(...eventYears) / 10) * 10;
+    const maxYear = Math.ceil(Math.max(...eventYears) / 10) * 10;
+    return minYear === maxYear ? [minYear - 5, maxYear + 5] : [minYear, maxYear];
   }, [events]);
 
   useEffect(() => {
@@ -268,6 +280,12 @@ export function MapStage({
     setSelectedBooks(new Set(allBooks));
     bookFilterInitializedRef.current = true;
   }, [allBooks]);
+
+  useEffect(() => {
+    if (timelineInitializedRef.current || events.length === 0) return;
+    setYears(timelineBounds);
+    timelineInitializedRef.current = true;
+  }, [events.length, setYears, timelineBounds]);
 
   const filteredEvents = useMemo(
     () =>
@@ -381,7 +399,7 @@ export function MapStage({
         />
       </div>
 
-      <Timeline years={years} eventYears={timelineEventYears} setYears={setYears} />
+      <Timeline years={years} bounds={timelineBounds} eventYears={timelineEventYears} setYears={setYears} />
 
       {status && <div className="vr-status">{status}</div>}
     </section>

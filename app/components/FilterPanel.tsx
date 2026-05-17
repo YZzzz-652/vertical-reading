@@ -11,6 +11,7 @@ import {
   type MapVersion,
 } from "../types";
 import { HISTORICAL_MAPS } from "../historical-maps";
+import { EventTypeGlyph } from "./EventTypeGlyph";
 
 type FilterPanelProps = {
   filters: FilterState;
@@ -123,7 +124,7 @@ function EventTypeFilter({ selected, onToggle }: { selected: Set<string>; onTogg
                 aria-label={`筛选${left}`}
                 onClick={() => onToggle(left)}
               >
-                <EventTypeGlyph />
+                <EventTypeGlyph type={left} />
                 <span>{left}</span>
               </button>
               <button
@@ -146,7 +147,7 @@ function EventTypeFilter({ selected, onToggle }: { selected: Set<string>; onTogg
                 aria-label={`筛选${right}`}
                 onClick={() => onToggle(right)}
               >
-                <EventTypeGlyph />
+                <EventTypeGlyph type={right} />
                 <span>{right}</span>
               </button>
             </div>
@@ -154,15 +155,6 @@ function EventTypeFilter({ selected, onToggle }: { selected: Set<string>; onTogg
         })}
       </div>
     </fieldset>
-  );
-}
-
-function EventTypeGlyph() {
-  return (
-    <svg viewBox="0 0 28 28" aria-hidden="true">
-      <path d="M8 9Q11 6 14 9Q17 6 20 9Q22 12 14 19Q6 12 8 9Z" />
-      <path d="M8 21h12" />
-    </svg>
   );
 }
 
