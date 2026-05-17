@@ -28,13 +28,13 @@ button {
 }
 
 .vr-app {
-  --atlas-edge: 16px;
+  --atlas-edge: 64px;
   --atlas-gap: var(--sp-5);
   --atlas-open-w: min(280px, 28vw);
   --atlas-collapsed-w: 44px;
   --atlas-dock-w: var(--atlas-open-w);
   --stage-dock-top: 64px;
-  --atlas-collapsed-top: 126px;
+  --atlas-collapsed-top: var(--stage-dock-top);
   position: relative;
   min-height: 100vh;
 }
@@ -568,6 +568,7 @@ button {
   top: var(--atlas-collapsed-top);
   bottom: auto;
   width: var(--atlas-collapsed-w);
+  pointer-events: auto;
 }
 
 .vr-screen.is-active .vr-left-dock > *,
@@ -607,21 +608,26 @@ button {
   width: 100%;
   min-height: 0;
   opacity: 1;
-  transform: translateY(0) scale(1);
-  transition:
-    opacity var(--dur-fast) var(--ease),
-    transform var(--dur-fast) var(--ease);
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.vr-screen .vr-right-dock > .vr-filter-panel {
+  transform: none;
+  transition: opacity var(--dur-fast) var(--ease);
 }
 
 .vr-filter-panel.is-hidden {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--atlas-open-w);
+  z-index: 0;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(8px) scale(0.98);
 }
 
 .vr-filter-panel.is-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
 }
 
 .vr-filter-panel .vr-panel-body--scroll {
@@ -758,22 +764,29 @@ button {
   color: var(--parchment);
   box-shadow: var(--shadow-panel);
   opacity: 1;
-  transform: scale(1);
   transition:
     opacity var(--dur-fast) var(--ease),
-    transform var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.vr-screen .vr-right-dock > .vr-filter-fab {
+  transform: none;
+  transition:
+    opacity var(--dur-fast) var(--ease),
     background var(--dur-fast) var(--ease);
 }
 
 .vr-filter-fab.is-hidden {
+  position: absolute;
   opacity: 0;
   pointer-events: none;
-  transform: scale(0.92);
 }
 
 .vr-filter-fab.is-visible {
+  position: relative;
+  z-index: 2;
   opacity: 1;
-  transform: scale(1);
+  pointer-events: auto;
 }
 
 .vr-filter-fab:hover {
