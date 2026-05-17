@@ -1,0 +1,1501 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Parallels · 经纬 — Current Map</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>/* Parallels (经纬) · Design Tokens */
+
+:root {
+  --parchment: #F5EDD8;
+  --ink: #2C1A0E;
+  --bronze: #c8a87a;
+
+  --paper-97: rgba(245, 237, 216, 0.97);
+  --paper-96: rgba(245, 237, 216, 0.96);
+  --paper-93: rgba(250, 247, 240, 0.93);
+  --ink-85: rgba(44, 26, 14, 0.85);
+  --ink-60: rgba(44, 26, 14, 0.60);
+  --hairline: rgba(196, 169, 106, 0.55);
+  --line-022: rgba(44, 26, 14, 0.22);
+  --line-040: rgba(44, 26, 14, 0.40);
+  --line-020: rgba(44, 26, 14, 0.20);
+  --year-text: rgba(44, 26, 14, 0.55);
+
+  --bg: var(--parchment);
+  --fg: var(--ink);
+  --fg-muted: #6c532e;
+  --fg-soft: #71572e;
+  --fg-rich: #33271b;
+  --fg-warm: #5a4525;
+  --fg-chip: #5f4725;
+  --fg-popup: #2d241a;
+  --fg-popup-copy: #3a2d20;
+  --fg-on-ink: var(--parchment);
+  --paper-cream: #efe2c0;
+  --paper-light: #f7eed6;
+  --map-base: #e9e1cf;
+  --map-wash-top: #efe3c4;
+  --map-wash-bottom: #e2d2a8;
+  --rule: var(--bronze);
+  --rule-fade: linear-gradient(90deg, transparent, rgba(196, 169, 106, 0.85), transparent);
+
+  --disc-m: #ece1c6;
+  --disc-f: #ead7c6;
+  --disc-m-ring: rgba(139, 115, 64, 0.55);
+  --disc-f-ring: rgba(170, 90, 110, 0.55);
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "EB Garamond", Georgia, serif;
+  --font-zh: "Noto Serif SC", "Songti SC", serif;
+
+  --fs-h1-en: 92px;
+  --fs-h1-zh: 60px;
+  --fs-h2-en: 22px;
+  --fs-h2-zh: 20px;
+  --fs-h3-en: 16px;
+  --fs-h3-zh: 15px;
+  --fs-body-en: 15px;
+  --fs-body-zh: 14px;
+  --fs-small: 11px;
+  --fs-brand-nav: 18px;
+  --lh-body: 1.75;
+  --lh-body-zh: 1.9;
+  --ls-small: 0.08em;
+
+  --r-panel: 12px;
+  --r-chip: 4px;
+  --r-pill: 999px;
+  --r-circle: 50%;
+
+  --bd-hair: 0.5px solid var(--bronze);
+  --bd-hair-soft: 1px solid var(--hairline);
+  --bd-marker: 2px solid #ffffff;
+
+  --shadow-panel: 0 16px 42px rgba(54, 42, 25, 0.16);
+  --shadow-popup: 0 18px 40px rgba(54, 42, 25, 0.20);
+  --shadow-marker: 0 2px 6px rgba(0, 0, 0, 0.30);
+
+  --blur-panel: blur(8px);
+  --ease: ease-in-out;
+  --dur-fast: 0.25s;
+  --dur-mid: 0.30s;
+  --dur-slow: 0.60s;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 14px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 26px;
+
+  --nav-h: 48px;
+  --panel-w: 340px;
+  --legend-w: 160px;
+  --marker-d: 40px;
+  --slider-handle-w: 14px;
+  --slider-handle-h: 26px;
+  --slider-fill-h: 3px;
+  --tick-major: 14px;
+  --tick-minor: 7px;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: var(--font-zh);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.vr-app {
+  --atlas-edge: 64px;
+  --atlas-gap: var(--sp-5);
+  --atlas-open-w: min(280px, 28vw);
+  --atlas-collapsed-w: 44px;
+  --atlas-dock-w: var(--atlas-open-w);
+  --stage-dock-top: 64px;
+  --atlas-collapsed-top: var(--stage-dock-top);
+  position: relative;
+  min-height: 100vh;
+}
+
+.vr-app.is-atlas-collapsed {
+  --atlas-dock-w: var(--atlas-collapsed-w);
+}
+
+.vr-top-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  height: var(--nav-h);
+  padding-left: 20px;
+  background: var(--ink-60);
+  transition: background var(--dur-slow) var(--ease);
+}
+
+.vr-app.is-map .vr-top-nav {
+  background: var(--ink-85);
+  backdrop-filter: var(--blur-panel);
+}
+
+.vr-top-brand {
+  border: 0;
+  background: transparent;
+  color: var(--parchment);
+  font-family: var(--font-display), var(--font-zh);
+  font-size: var(--fs-brand-nav);
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vr-screen {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease);
+}
+
+.vr-screen.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vr-screen .vr-left-dock > *,
+.vr-screen .vr-right-dock > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.vr-screen:not(.is-active) .vr-left-dock > *,
+.vr-screen:not(.is-active) .vr-right-dock > * {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.vr-landing {
+  overflow: hidden;
+  padding: calc(var(--nav-h) + 28px) 36px 36px;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(200, 168, 122, 0.18) 0, transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(44, 26, 14, 0.06) 0, transparent 60%),
+    var(--parchment);
+}
+
+.vr-landing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 48px;
+  align-items: center;
+  height: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.vr-landing-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 14px;
+}
+
+.vr-landing-eyebrow {
+  color: var(--fg-muted);
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.vr-landing-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  color: var(--ink);
+  line-height: 0.95;
+}
+
+.vr-landing-title span:first-child {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1-en);
+  font-style: italic;
+  font-weight: 900;
+}
+
+.vr-landing-title span:nth-child(2) {
+  font-family: var(--font-zh);
+  font-size: var(--fs-h1-zh);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.vr-landing-tag {
+  max-width: 460px;
+  margin: 6px 0 0;
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 18px;
+  line-height: 1.85;
+}
+
+.vr-landing-tag-en {
+  max-width: 460px;
+  margin: 0;
+  color: var(--fg-warm);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.vr-landing-cta {
+  display: inline-flex;
+  gap: 14px;
+  align-items: baseline;
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 12px 22px;
+  border: var(--bd-hair);
+  border-radius: var(--r-chip);
+  background: var(--paper-96);
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.vr-landing-cta-en {
+  color: var(--fg-muted);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.vr-landing-stats {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 32px;
+  justify-content: start;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: var(--bd-hair-soft);
+}
+
+.vr-landing-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vr-landing-stats strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.vr-landing-stats span {
+  color: var(--fg-muted);
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.vr-landing-wall {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 26px;
+  align-content: center;
+  max-height: calc(100vh - var(--nav-h) - 64px);
+}
+
+.vr-landing-wall .vr-cover {
+  aspect-ratio: 5 / 7.2;
+}
+
+.vr-landing-wall .vr-cover:nth-child(3n + 2) {
+  transform: translateY(18px);
+}
+
+.vr-landing-wall .vr-cover:nth-child(3n + 3) {
+  transform: translateY(34px);
+}
+
+.vr-landing-wall .vr-cover:hover {
+  transform: translateY(-6px);
+}
+
+.vr-cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 5 / 7;
+  overflow: hidden;
+  border: var(--bd-hair);
+  color: var(--ink);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 14px 28px rgba(54, 42, 25, 0.14),
+    1px 0 0 rgba(44, 26, 14, 0.10);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+
+.vr-cover:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 22px 36px rgba(54, 42, 25, 0.22),
+    1px 0 0 rgba(44, 26, 14, 0.10);
+}
+
+.vr-cover--img {
+  padding: 0;
+  background: var(--paper-cream);
+}
+
+.vr-cover--img > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.06) saturate(0.92);
+}
+
+.vr-cover-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 22px 12px 10px;
+  background: linear-gradient(180deg, rgba(44, 26, 14, 0) 0%, rgba(44, 26, 14, 0.78) 70%, rgba(44, 26, 14, 0.92) 100%);
+  color: var(--parchment);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.vr-cover--img:hover .vr-cover-caption {
+  opacity: 1;
+}
+
+.vr-cover-caption-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.vr-cover-caption-meta {
+  color: rgba(245, 237, 216, 0.78);
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.vr-cover--typographic {
+  padding: 18px 16px 14px;
+}
+
+.vr-cover--paper {
+  background: var(--paper-cream);
+}
+
+.vr-cover::after {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 4px;
+  border-left: 0.5px solid rgba(44, 26, 14, 0.12);
+  background: linear-gradient(90deg, rgba(44, 26, 14, 0.18), rgba(44, 26, 14, 0));
+  content: "";
+}
+
+.vr-cover-region {
+  color: var(--fg-muted);
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.vr-cover-rule {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--rule-fade);
+}
+
+.vr-cover-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.vr-cover-zh {
+  margin-top: 8px;
+  color: rgba(44, 26, 14, 0.7);
+  font-family: var(--font-zh);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+
+.vr-cover-foot {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 0.5px solid rgba(44, 26, 14, 0.18);
+  font-family: var(--font-body);
+}
+
+.vr-cover-author {
+  color: var(--fg-soft);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.vr-cover-year {
+  color: var(--fg-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.vr-stage {
+  overflow: hidden;
+  background: var(--map-base);
+}
+
+.vr-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 30% 35%, rgba(200, 168, 122, 0.18) 0 60px, transparent 120px),
+    radial-gradient(circle at 70% 60%, rgba(200, 168, 122, 0.15) 0 80px, transparent 160px),
+    linear-gradient(180deg, var(--map-wash-top) 0%, var(--map-wash-bottom) 100%);
+}
+
+.vr-map-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 350;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(245, 237, 216, 0) 0%, rgba(245, 237, 216, 0.18) 100%);
+}
+
+.leaflet-container {
+  background: var(--map-base);
+  font-family: var(--font-zh);
+}
+
+.leaflet-control-zoom {
+  margin-top: 62px !important;
+  border: var(--bd-hair) !important;
+  box-shadow: var(--shadow-panel) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--paper-93) !important;
+  color: var(--ink) !important;
+}
+
+.vr-div-icon {
+  width: var(--marker-d) !important;
+  height: var(--marker-d) !important;
+  background: transparent;
+  border: 0;
+}
+
+.marker-selected {
+  border-radius: var(--r-circle);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.60),
+    0 0 12px 6px rgba(255, 255, 255, 0.35);
+}
+
+.vr-leaflet-marker {
+  display: block;
+  width: var(--marker-d);
+  height: var(--marker-d);
+  border: var(--bd-marker);
+  border-radius: var(--r-circle);
+  background: var(--bronze);
+  box-shadow: var(--shadow-marker);
+  object-fit: cover;
+}
+
+.vr-leaflet-marker.is-fictional {
+  border-style: dashed;
+  opacity: 0.75;
+}
+
+.vr-panel {
+  position: absolute;
+  z-index: 500;
+  overflow: hidden;
+  border: var(--bd-hair);
+  border-radius: var(--r-panel);
+  background: var(--paper-97);
+  box-shadow: var(--shadow-panel);
+  color: var(--ink);
+  backdrop-filter: var(--blur-panel);
+}
+
+.vr-panel-header {
+  display: flex;
+  gap: var(--sp-5);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: var(--bd-hair);
+  border-radius: var(--r-panel) var(--r-panel) 0 0;
+  background: var(--ink);
+}
+
+.vr-panel-header h1,
+.vr-panel-header h2 {
+  margin: 0;
+  color: var(--parchment);
+  font-family: var(--font-zh);
+  font-size: var(--fs-h2-zh);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.vr-panel-h {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.vr-panel-h em {
+  color: rgba(245, 237, 216, 0.65);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.vr-panel-header button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--parchment);
+  font-family: var(--font-zh);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.vr-panel-body {
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  font-family: var(--font-zh);
+}
+
+.vr-left-dock,
+.vr-right-dock {
+  position: absolute;
+  top: var(--stage-dock-top);
+  bottom: 150px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.vr-left-dock {
+  bottom: auto;
+  left: 16px;
+  height: calc(100vh - var(--stage-dock-top) - 150px);
+  width: min(330px, 30vw);
+}
+
+.vr-right-dock {
+  right: var(--atlas-edge);
+  align-items: flex-end;
+  width: var(--atlas-dock-w);
+}
+
+.vr-right-dock.is-collapsed {
+  top: var(--atlas-collapsed-top);
+  bottom: auto;
+  width: var(--atlas-collapsed-w);
+  pointer-events: auto;
+}
+
+.vr-screen.is-active .vr-left-dock > *,
+.vr-screen.is-active .vr-right-dock > * {
+  pointer-events: auto;
+}
+
+.vr-search {
+  padding: 6px 12px;
+  border: var(--bd-hair);
+  border-radius: var(--r-chip);
+  background: var(--paper-96);
+  backdrop-filter: var(--blur-panel);
+}
+
+.vr-search input {
+  width: 100%;
+  padding: 4px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-body), var(--font-zh);
+  font-size: var(--fs-body-en);
+}
+
+.vr-search input::placeholder {
+  color: var(--fg-soft);
+  font-family: var(--font-zh);
+}
+
+.vr-filter-panel {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  opacity: 1;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.vr-screen .vr-right-dock > .vr-filter-panel {
+  transform: none;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.vr-filter-panel.is-hidden {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--atlas-open-w);
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vr-filter-panel.is-visible {
+  opacity: 1;
+}
+
+.vr-filter-panel .vr-panel-body--scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.vr-filter-group {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.vr-filter-group + .vr-filter-group {
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: var(--bd-hair-soft);
+}
+
+.vr-filter-group legend {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.vr-filter-group legend em {
+  color: var(--fg-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.vr-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px 6px;
+}
+
+.vr-avatar-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  line-height: 1.1;
+  transition: opacity 0.18s var(--ease);
+}
+
+.vr-avatar-chip img {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--bronze);
+  box-shadow: 0 2px 6px rgba(44, 26, 14, 0.25);
+  object-fit: cover;
+  transition: filter 0.2s var(--ease), opacity 0.2s var(--ease), transform 0.15s var(--ease);
+}
+
+.vr-avatar-chip.is-off img {
+  border-color: rgba(255, 255, 255, 0.7);
+  filter: grayscale(1) brightness(1.05) contrast(0.92);
+  opacity: 0.42;
+  box-shadow: 0 1px 3px rgba(44, 26, 14, 0.15);
+}
+
+.vr-avatar-chip.is-off {
+  color: var(--fg-soft);
+}
+
+.vr-avatar-chip:hover img {
+  transform: translateY(-1px);
+}
+
+.vr-gender-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.vr-gender-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(139, 115, 64, 0.55);
+  border-radius: 6px;
+  background: var(--disc-m);
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px var(--disc-m-ring);
+}
+
+.vr-gender-chip.is-off {
+  background: transparent;
+  color: var(--fg-soft);
+  border-color: rgba(139, 115, 64, 0.28);
+  box-shadow: none;
+  opacity: 0.58;
+}
+
+.vr-filter-fab {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  align-self: flex-end;
+  width: 44px;
+  height: 44px;
+  border: var(--bd-hair);
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--parchment);
+  box-shadow: var(--shadow-panel);
+  opacity: 1;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.vr-screen .vr-right-dock > .vr-filter-fab {
+  transform: none;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.vr-filter-fab.is-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vr-filter-fab.is-visible {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vr-filter-fab:hover {
+  background: #1f120a;
+}
+
+.vr-pill-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vr-pill-stack--row {
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.vr-pill-stack--row .vr-meta-pill {
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  gap: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.vr-pill-stack--row .vr-meta-glyph {
+  flex: 0 0 13px;
+  width: 13px;
+  height: 13px;
+}
+
+.vr-meta-pill {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 10px 6px 8px;
+  border: 1px solid rgba(139, 115, 64, 0.55);
+  border-radius: var(--r-pill);
+  background: var(--paper-96);
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.vr-meta-pill .vr-meta-glyph {
+  flex: 0 0 16px;
+  color: var(--bronze);
+}
+
+.vr-meta-pill.is-off {
+  border-color: rgba(139, 115, 64, 0.28);
+  background: transparent;
+  color: var(--fg-soft);
+  opacity: 0.6;
+}
+
+.vr-meta-pill.is-fictional {
+  border-style: dashed;
+}
+
+.vr-time-pill.is-on {
+  background: rgba(200, 168, 122, 0.18);
+}
+
+.vr-loc-pill.is-on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+.vr-events-panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.vr-events-tabs {
+  display: flex;
+  flex: 0 0 auto;
+  border-bottom: var(--bd-hair-soft);
+  background: rgba(232, 217, 182, 0.18);
+}
+
+.vr-events-tab {
+  display: flex;
+  flex: 1 1 0;
+  gap: 6px;
+  align-items: baseline;
+  justify-content: center;
+  padding: 10px 8px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--fg-soft);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vr-events-tab em {
+  color: var(--fg-muted);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.vr-events-tab.is-on {
+  border-bottom-color: var(--bronze);
+  background: var(--paper-97);
+  color: var(--ink);
+}
+
+.vr-events-tab.is-on em {
+  color: var(--bronze);
+}
+
+.vr-events-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  font-family: var(--font-zh);
+}
+
+.vr-events-list {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  margin: 0;
+  list-style: none;
+}
+
+.vr-event-row {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 6px 6px 0;
+  border: 0;
+  border-bottom: var(--bd-hair-soft);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.vr-event-row:hover {
+  background: rgba(200, 168, 122, 0.10);
+}
+
+.vr-event-row.is-selected {
+  background: var(--paper-93);
+}
+
+.vr-event-row--world {
+  cursor: default;
+}
+
+.vr-event-row--world:hover {
+  background: transparent;
+}
+
+.vr-event-year {
+  padding-top: 2px;
+  color: var(--bronze);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 700;
+  text-align: right;
+}
+
+.vr-event-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.vr-event-character {
+  color: var(--ink);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.vr-event-book {
+  color: var(--fg-soft);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.vr-event-desc {
+  color: var(--fg-rich);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.vr-event-empty {
+  padding: 6px 0;
+  color: var(--fg-soft);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.vr-event-empty--pending {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  padding: 28px 8px;
+  border: 1px dashed rgba(139, 115, 64, 0.35);
+  border-radius: var(--r-chip);
+  font-family: var(--font-zh);
+  font-style: normal;
+}
+
+.vr-event-empty--pending em {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.vr-mapver-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.vr-mapver-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border: 1px solid rgba(139, 115, 64, 0.45);
+  border-radius: 6px;
+  background: var(--paper-96);
+  color: var(--ink);
+  font-family: var(--font-zh);
+  text-align: left;
+}
+
+.vr-mapver-tile-label {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vr-mapver-tile-caption {
+  color: var(--fg-muted);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.vr-mapver-tile.is-on {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+.vr-mapver-tile.is-on .vr-mapver-tile-caption {
+  color: rgba(245, 237, 216, 0.65);
+}
+
+.vr-timeline {
+  position: absolute;
+  right: 44px;
+  bottom: 34px;
+  left: 44px;
+  z-index: 520;
+  height: 74px;
+  padding: 0 18px;
+}
+
+.vr-slider {
+  position: relative;
+  height: 26px;
+}
+
+.vr-track {
+  position: absolute;
+  top: 13px;
+  right: 0;
+  left: 0;
+  height: 1.5px;
+  background: var(--line-022);
+}
+
+.vr-fill {
+  position: absolute;
+  top: 12px;
+  height: var(--slider-fill-h);
+  border-radius: var(--r-pill);
+  background: var(--bronze);
+  box-shadow: 0 1px 4px rgba(200, 168, 122, 0.5);
+}
+
+.vr-handle {
+  position: absolute;
+  top: 0;
+  width: var(--slider-handle-w);
+  height: var(--slider-handle-h);
+  border-radius: 3px;
+  background: var(--bronze);
+  box-shadow: 0 2px 6px rgba(44, 26, 14, 0.3);
+  cursor: grab;
+}
+
+.vr-handle::before,
+.vr-handle::after {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.65);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.vr-handle::before {
+  top: 35%;
+}
+
+.vr-handle::after {
+  top: 55%;
+  box-shadow: 0 5px 0 rgba(255, 255, 255, 0.65);
+}
+
+.vr-ticks {
+  position: relative;
+  height: 42px;
+  margin-top: 12px;
+}
+
+.vr-tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: var(--tick-minor);
+  background: var(--line-020);
+  transform: translateX(-50%);
+}
+
+.vr-tick.is-major {
+  height: var(--tick-major);
+  background: var(--line-040);
+}
+
+.vr-tick.is-major::after {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  color: var(--year-text);
+  font-family: var(--font-zh);
+  font-size: var(--fs-body-en);
+  white-space: nowrap;
+  content: attr(data-year);
+  transform: translateX(-50%);
+}
+
+.vr-popup-overlay {
+  position: fixed;
+  top: var(--stage-dock-top);
+  right: calc(var(--atlas-edge) + var(--atlas-dock-w) + var(--atlas-gap));
+  z-index: 1100;
+  opacity: 1;
+  pointer-events: none;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease),
+    right var(--dur-fast) var(--ease);
+  animation: popup-enter var(--dur-fast) var(--ease);
+}
+
+.vr-popup-overlay.is-atlas-collapsed {
+  right: calc(var(--atlas-edge) + var(--atlas-collapsed-w) + var(--atlas-gap));
+}
+
+.vr-popup-overlay.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  animation: none;
+}
+
+@keyframes popup-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vr-popup-card {
+  position: relative;
+  width: min(380px, calc(100vw - var(--atlas-edge) - var(--atlas-dock-w) - var(--atlas-gap) - var(--atlas-edge)));
+  padding: 16px 18px;
+  border: var(--bd-hair);
+  border-radius: var(--r-panel);
+  background: rgba(250, 247, 240, 0.97);
+  box-shadow: var(--shadow-popup);
+  color: var(--fg-popup);
+  font-family: var(--font-zh);
+  pointer-events: auto;
+}
+
+.vr-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: var(--r-circle);
+  background: transparent;
+  color: var(--fg-soft);
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.vr-popup-close:hover {
+  color: var(--ink);
+}
+
+.vr-popup-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.vr-popup-title-row h2 {
+  margin: 0 5px 0 0;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.vr-popup-chip {
+  padding: 2px 8px;
+  border: 1px solid rgba(139, 115, 64, 0.45);
+  border-radius: var(--r-pill);
+  background: rgba(255, 252, 246, 0.75);
+  color: var(--fg-chip);
+  font-family: var(--font-body), var(--font-zh);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.vr-popup-card header p {
+  margin: 6px 0 0;
+  color: var(--fg-muted);
+  font-family: var(--font-display);
+  font-size: var(--fs-body-en);
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.vr-popup-rule {
+  height: 1px;
+  margin: 11px 0;
+  background: var(--rule-fade);
+}
+
+.vr-popup-event {
+  margin: 0;
+  font-size: var(--fs-body-en);
+  line-height: 1.5;
+}
+
+.vr-popup-meta {
+  margin: 9px 0 0;
+  color: var(--fg-soft);
+  font-size: 13px;
+}
+
+.vr-popup-quote summary {
+  color: var(--fg-chip);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.vr-popup-quote p {
+  margin: 7px 0 0;
+  color: var(--fg-popup-copy);
+  font-size: var(--fs-body-en);
+  line-height: 1.5;
+}
+
+.vr-status {
+  position: absolute;
+  left: 50%;
+  bottom: 128px;
+  z-index: 700;
+  padding: 8px 12px;
+  border: var(--bd-hair);
+  border-radius: var(--r-chip);
+  background: var(--paper-96);
+  color: var(--fg-soft);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 980px) {
+  body {
+    overflow: auto;
+  }
+
+  .vr-screen {
+    min-height: 100vh;
+  }
+
+  .vr-landing {
+    overflow-y: auto;
+    padding: calc(var(--nav-h) + 24px) 20px 28px;
+  }
+
+  .vr-landing-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    height: auto;
+    min-height: calc(100vh - var(--nav-h) - 52px);
+  }
+
+  .vr-landing-title span:first-child {
+    font-size: 68px;
+  }
+
+  .vr-landing-title span:nth-child(2) {
+    font-size: 46px;
+  }
+
+  .vr-landing-wall {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    max-height: none;
+  }
+
+  .vr-left-dock,
+  .vr-right-dock {
+    --atlas-open-w: min(320px, calc(100vw - 32px));
+    width: var(--atlas-dock-w);
+  }
+
+  .vr-left-dock {
+    bottom: 170px;
+    height: calc(100vh - var(--stage-dock-top) - 170px);
+  }
+
+  .vr-right-dock {
+    bottom: auto;
+    left: 16px;
+    align-items: flex-start;
+    transform: translateY(calc(100vh - 255px));
+  }
+}
+
+@media (max-width: 680px) {
+  .vr-landing-wall {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vr-landing-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .vr-left-dock {
+    top: 60px;
+    bottom: 150px;
+    height: calc(100vh - 60px - 150px);
+    width: calc(100vw - 32px);
+  }
+
+  .vr-right-dock {
+    right: var(--atlas-edge);
+    left: auto;
+    width: var(--atlas-collapsed-w);
+    transform: none;
+  }
+
+  .vr-right-dock .vr-filter-panel {
+    display: none;
+  }
+
+  .vr-timeline {
+    right: 16px;
+    left: 16px;
+    padding: 0 10px;
+  }
+}
+
+.vr-stage.is-active,.vr-landing.is-active{opacity:1;pointer-events:auto}.vr-landing-cta{text-decoration:none}.leaflet-container{height:100%}
+</style></head><body><main class="vr-app is-map is-atlas-open"><button type="button" class="vr-top-brand">Parallels · 经纬</button><section class="vr-screen vr-stage map-modern is-active"><div id="map" class="vr-map" aria-label="文学事件地图"></div><div class="vr-map-scrim" aria-hidden="true"></div><div class="vr-left-dock"><div class="vr-search"><input type="text" placeholder="搜索书目或人物" value=""></div><section class="vr-panel vr-events-panel"><header class="vr-panel-header"><h2 class="vr-panel-h"><span>1700 - 1930</span><em>347 parallel lives</em></h2></header><nav class="vr-events-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" class="vr-events-tab is-on"><span>书中人物</span><em>Novels</em></button><button type="button" role="tab" aria-selected="false" class="vr-events-tab"><span>真实世界</span><em>History</em></button></nav><div class="vr-events-body"><ul class="vr-events-list"><li><button type="button" class="vr-event-row " data-event-id="HLM-001"><div class="vr-event-year">1730</div><div class="vr-event-meta"><div class="vr-event-character">贾宝玉<span class="vr-event-book"> · 《红楼梦》</span></div><div class="vr-event-desc">贾宝玉衔玉而生，在荣国府深受祖母溺爱，自幼厌恶仕途经济，流连于大观园的诗酒女儿之间。</div></div></button></li><li><button type="button" class="vr-event-row " data-event-id="HLM-002"><div class="vr-event-year">1730</div><div class="vr-event-meta"><div class="vr-event-character">林黛玉<span class="vr-event-book"> · 《红楼梦》</span></div><div class="vr-event-desc">林黛玉母亲亡故，被外祖母贾母接入荣国府，初入贾府时步步留心、时时在意，不肯多走一步路。</div></div></button></li><li><button type="button" class="vr-event-row " data-event-id="AKN-004"><div class="vr-event-year">1874</div><div class="vr-event-meta"><div class="vr-event-character">安娜<span class="vr-event-book"> · 《安娜·卡列尼娜》</span></div><div class="vr-event-desc">安娜在圣彼得堡社交圈中陷入情感与名誉的双重压力，个人命运开始脱离既定秩序。</div></div></button></li><li><button type="button" class="vr-event-row " data-event-id="LGDBGC-004"><div class="vr-event-year">1922</div><div class="vr-event-meta"><div class="vr-event-character">盖茨比<span class="vr-event-book"> · 《了不起的盖茨比》</span></div><div class="vr-event-desc">盖茨比在长岛豪宅举办盛大宴会，希望借喧嚣重新接近黛西。</div></div></button></li><li><button type="button" class="vr-event-row " data-event-id="FH-003"><div class="vr-event-year">1890</div><div class="vr-event-meta"><div class="vr-event-character">玛丝洛娃<span class="vr-event-book"> · 《复活》</span></div><div class="vr-event-desc">玛丝洛娃在法庭上被审判，她的人生被制度与旧日伤害推向更深的困境。</div></div></button></li><li><button type="button" class="vr-event-row is-selected" data-event-id="LTXZ-006"><div class="vr-event-year">1930</div><div class="vr-event-meta"><div class="vr-event-character">祥子<span class="vr-event-book"> · 《骆驼祥子》</span></div><div class="vr-event-desc">祥子彻底堕落成街头无赖，过去强壮的青年再也找不到了。</div></div></button></li></ul></div></section></div><div class="vr-right-dock"><button type="button" class="vr-filter-fab is-hidden" aria-label="展开图志"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 3 L2 8.5 L12 14 L22 8.5 Z"></path><path d="M2 12 L12 17.5 L22 12 L19.5 10.7 L12 14.7 L4.5 10.7 Z"></path><path d="M2 15.5 L12 21 L22 15.5 L19.5 14.2 L12 18.2 L4.5 14.2 Z"></path></svg></button><section class="vr-panel vr-filter-panel is-visible"><header class="vr-panel-header"><h2 class="vr-panel-h"><span>图志</span><em>Atlas</em></h2><button type="button" aria-label="收起图志">›</button></header><div class="vr-panel-body vr-panel-body--scroll"><fieldset class="vr-filter-group"><legend>地图年代 <em>Era</em></legend><div class="vr-mapver-row"><button type="button" class="vr-mapver-tile is-on"><span class="vr-mapver-tile-label">现代</span><span class="vr-mapver-tile-caption">Today</span></button><button type="button" class="vr-mapver-tile"><span class="vr-mapver-tile-label">20 世纪</span><span class="vr-mapver-tile-caption">20th Century</span></button></div></fieldset><fieldset class="vr-filter-group"><legend>阶层 <em>Class</em></legend><div class="vr-avatar-grid"><button type="button" title="贵族" class="vr-avatar-chip is-on"><img src="../../public/icons/%E8%B4%B5%E6%97%8F.png" alt=""><span>贵族</span></button><button type="button" title="平民" class="vr-avatar-chip is-on"><img src="../../public/icons/%E5%B9%B3%E6%B0%91.png" alt=""><span>平民</span></button><button type="button" title="底层" class="vr-avatar-chip is-on"><img src="../../public/icons/%E5%BA%95%E5%B1%82.png" alt=""><span>底层</span></button><button type="button" title="知识分子" class="vr-avatar-chip is-on"><img src="../../public/icons/%E7%9F%A5%E8%AF%86%E5%88%86%E5%AD%90.png" alt=""><span>知识分子</span></button><button type="button" title="军人" class="vr-avatar-chip is-on"><img src="../../public/icons/%E5%86%9B%E4%BA%BA.png" alt=""><span>军人</span></button><button type="button" title="资产阶级" class="vr-avatar-chip is-on"><img src="../../public/icons/%E8%B5%84%E4%BA%A7%E9%98%B6%E7%BA%A7.png" alt=""><span>资产阶级</span></button><button type="button" title="宗教人士" class="vr-avatar-chip is-on"><img src="../../public/icons/%E5%AE%97%E6%95%99%E4%BA%BA%E5%A3%AB.png" alt=""><span>宗教人士</span></button><button type="button" title="奴隶农奴" class="vr-avatar-chip is-on"><img src="../../public/icons/%E5%A5%B4%E9%9A%B6%E5%86%9C%E5%A5%B4.png" alt=""><span>奴隶农奴</span></button></div></fieldset><fieldset class="vr-filter-group"><legend>性别 <em>Gender</em></legend><div class="vr-gender-grid"><button type="button" class="vr-gender-chip is-on">男性角色</button><button type="button" class="vr-gender-chip is-on">女性角色</button></div></fieldset><fieldset class="vr-filter-group"><legend>时间类型 <em>Time</em></legend><div class="vr-pill-stack vr-pill-stack--row"><button type="button" class="vr-meta-pill vr-time-pill is-on"><span>◷</span><span>历史锚定</span></button><button type="button" class="vr-meta-pill vr-time-pill is-on is-fictional"><span>◌</span><span>虚构映射</span></button><button type="button" class="vr-meta-pill vr-time-pill is-on"><span>◷</span><span>创作年代</span></button></div></fieldset><fieldset class="vr-filter-group"><legend>地点类型 <em>Place</em></legend><div class="vr-pill-stack vr-pill-stack--row"><button type="button" class="vr-meta-pill vr-loc-pill is-on"><span>真实</span></button><button type="button" class="vr-meta-pill vr-loc-pill is-on is-fictional"><span>虚构映射</span></button><button type="button" class="vr-meta-pill vr-loc-pill is-on is-fictional"><span>虚构无对应</span></button></div></fieldset></div></section></div><section class="vr-timeline" aria-label="年份范围筛选"><div class="vr-slider"><div class="vr-track"></div><div class="vr-fill" style="left:0%;right:0%"></div><div class="vr-handle" role="slider" tabindex="0" aria-valuenow="1700" style="left:calc(0% - 7px)"></div><div class="vr-handle" role="slider" tabindex="0" aria-valuenow="1930" style="left:calc(100% - 7px)"></div></div><div class="vr-ticks"><span class="vr-tick is-major" data-year="1700" style="left:0%"></span><span class="vr-tick "  style="left:4.3478260869565215%"></span><span class="vr-tick "  style="left:8.695652173913043%"></span><span class="vr-tick "  style="left:13.043478260869565%"></span><span class="vr-tick "  style="left:17.391304347826086%"></span><span class="vr-tick is-major" data-year="1750" style="left:21.73913043478261%"></span><span class="vr-tick "  style="left:26.08695652173913%"></span><span class="vr-tick "  style="left:30.434782608695656%"></span><span class="vr-tick "  style="left:34.78260869565217%"></span><span class="vr-tick "  style="left:39.130434782608695%"></span><span class="vr-tick is-major" data-year="1800" style="left:43.47826086956522%"></span><span class="vr-tick "  style="left:47.82608695652174%"></span><span class="vr-tick "  style="left:52.17391304347826%"></span><span class="vr-tick "  style="left:56.52173913043478%"></span><span class="vr-tick "  style="left:60.86956521739131%"></span><span class="vr-tick is-major" data-year="1850" style="left:65.21739130434783%"></span><span class="vr-tick "  style="left:69.56521739130434%"></span><span class="vr-tick "  style="left:73.91304347826086%"></span><span class="vr-tick "  style="left:78.26086956521739%"></span><span class="vr-tick "  style="left:82.6086956521739%"></span><span class="vr-tick is-major" data-year="1900" style="left:86.95652173913044%"></span><span class="vr-tick "  style="left:91.30434782608695%"></span><span class="vr-tick "  style="left:95.65217391304348%"></span><span class="vr-tick "  style="left:100%"></span></div></section><div class="vr-popup-overlay is-atlas-open"><article class="vr-popup-card"><button type="button" class="vr-popup-close" aria-label="关闭气泡卡片">×</button><header><div class="vr-popup-title-row"><h2>祥子</h2><span class="vr-popup-chip">底层</span><span class="vr-popup-chip">男</span><span class="vr-popup-chip">人力车夫/乡下青年</span></div><p><em>骆驼祥子 · 老舍</em></p></header><div class="vr-popup-rule"></div><p class="vr-popup-event">祥子彻底堕落成街头无赖，过去强壮的青年再也找不到了。</p><p class="vr-popup-meta">地点：北平街头 · 真实　时间：历史锚定 · 1930</p><div class="vr-popup-rule"></div><details class="vr-popup-quote" open><summary>原文摘录</summary><p>祥子变了——他不再拉车——他坐在街口给人跑腿、传话、做证、告状——什么钱都赚——什么便宜都占。</p></details></article></div></section></main><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>const events=[{"id":"HLM-001","year":1730,"character":"贾宝玉","book":"红楼梦","author":"曹雪芹","class":"贵族","gender":"男","tags":"荣国府公子","event":"贾宝玉衔玉而生，在荣国府深受祖母溺爱，自幼厌恶仕途经济，流连于大观园的诗酒女儿之间。","quote":"宝玉听了，便如醍醐灌顶，心中自思：原来天地间竟有这样一番清净女儿世界。","locationName":"荣国府","locationType":"虚构映射","timeType":"虚构映射","lat":39.9042,"lng":116.4074},{"id":"HLM-002","year":1730,"character":"林黛玉","book":"红楼梦","author":"曹雪芹","class":"贵族","gender":"女","tags":"寄居少女","event":"林黛玉母亲亡故，被外祖母贾母接入荣国府，初入贾府时步步留心、时时在意，不肯多走一步路。","quote":"黛玉方进入房时，只见两个人搀着一位鬓发如银的老母迎上来。","locationName":"荣国府","locationType":"虚构映射","timeType":"虚构映射","lat":39.9142,"lng":116.3974},{"id":"AKN-004","year":1874,"character":"安娜","book":"安娜·卡列尼娜","author":"托尔斯泰","class":"贵族","gender":"女","tags":"上流社会女子","event":"安娜在圣彼得堡社交圈中陷入情感与名誉的双重压力，个人命运开始脱离既定秩序。","quote":"她觉得自己不能再生活在虚伪的平静中；每一次沉默都像新的审判。","locationName":"圣彼得堡","locationType":"真实","timeType":"历史锚定","lat":59.9311,"lng":30.3609},{"id":"LGDBGC-004","year":1922,"character":"盖茨比","book":"了不起的盖茨比","author":"菲茨杰拉德","class":"资产阶级","gender":"男","tags":"新富","event":"盖茨比在长岛豪宅举办盛大宴会，希望借喧嚣重新接近黛西。","quote":"他的梦似乎近在咫尺，只要伸手就能触到那盏绿灯。","locationName":"长岛","locationType":"真实","timeType":"历史锚定","lat":40.7891,"lng":-73.135},{"id":"FH-003","year":1890,"character":"玛丝洛娃","book":"复活","author":"托尔斯泰","class":"底层","gender":"女","tags":"受审女子","event":"玛丝洛娃在法庭上被审判，她的人生被制度与旧日伤害推向更深的困境。","quote":"她站在那里，仿佛一切话语都已经从别人那里替她说完。","locationName":"莫斯科法院","locationType":"真实","timeType":"历史锚定","lat":55.7558,"lng":37.6173},{"id":"LTXZ-006","year":1930,"character":"祥子","book":"骆驼祥子","author":"老舍","class":"底层","gender":"男","tags":"人力车夫/乡下青年","event":"祥子彻底堕落成街头无赖，过去强壮的青年再也找不到了。","quote":"祥子变了——他不再拉车——他坐在街口给人跑腿、传话、做证、告状——什么钱都赚——什么便宜都占。","locationName":"北平街头","locationType":"真实","timeType":"历史锚定","lat":39.9042,"lng":116.4074}];const classIcon=(name)=>"../../public/icons/"+encodeURIComponent(name)+".png";const map=L.map("map",{center:[39,72],zoom:4,zoomControl:false,worldCopyJump:true});L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap contributors &copy; CARTO",subdomains:"abcd",maxZoom:20}).addTo(map);L.control.zoom({position:"topright"}).addTo(map);function markerHtml(e){return "<img class=\"vr-leaflet-marker "+(e.timeType==="虚构映射"?"is-fictional":"")+"\" src=\""+classIcon(e.class)+"\" alt=\"\" title=\""+e.character+"\">"}function setAtlas(open){document.querySelector(".vr-app").classList.toggle("is-atlas-open",open);document.querySelector(".vr-app").classList.toggle("is-atlas-collapsed",!open);document.querySelector(".vr-right-dock").classList.toggle("is-collapsed",!open);document.querySelector(".vr-filter-panel").className="vr-panel vr-filter-panel "+(open?"is-visible":"is-hidden");document.querySelector(".vr-filter-fab").className="vr-filter-fab "+(open?"is-hidden":"is-visible");document.querySelector(".vr-popup-overlay").classList.toggle("is-atlas-open",open);document.querySelector(".vr-popup-overlay").classList.toggle("is-atlas-collapsed",!open)}document.querySelector("[aria-label=\"收起图志\"]").addEventListener("click",()=>setAtlas(false));document.querySelector(".vr-filter-fab").addEventListener("click",()=>setAtlas(true));events.forEach((event)=>{L.marker([event.lat,event.lng],{icon:L.divIcon({className:"vr-div-icon "+(event.id==="LTXZ-006"?"marker-selected":""),html:markerHtml(event),iconSize:[40,40],iconAnchor:[20,20]})}).addTo(map)});</script></body></html>
