@@ -33,14 +33,14 @@ button {
   --atlas-open-w: min(280px, 28vw);
   --atlas-collapsed-w: 44px;
   --atlas-dock-w: var(--atlas-open-w);
-  --atlas-dock-top: 64px;
+  --stage-dock-top: 64px;
+  --atlas-collapsed-top: 126px;
   position: relative;
   min-height: 100vh;
 }
 
 .vr-app.is-atlas-collapsed {
   --atlas-dock-w: var(--atlas-collapsed-w);
-  --atlas-dock-top: 126px;
 }
 
 .vr-top-nav {
@@ -527,7 +527,7 @@ button {
 .vr-left-dock,
 .vr-right-dock {
   position: absolute;
-  top: var(--atlas-dock-top);
+  top: var(--stage-dock-top);
   bottom: 150px;
   z-index: 500;
   display: flex;
@@ -537,7 +537,9 @@ button {
 }
 
 .vr-left-dock {
+  bottom: auto;
   left: 16px;
+  height: calc(100vh - var(--stage-dock-top) - 150px);
   width: min(330px, 30vw);
 }
 
@@ -548,7 +550,7 @@ button {
 }
 
 .vr-right-dock.is-collapsed {
-  top: 126px;
+  top: var(--atlas-collapsed-top);
   bottom: auto;
   width: var(--atlas-collapsed-w);
 }
@@ -1101,7 +1103,7 @@ button {
 
 .vr-popup-overlay {
   position: fixed;
-  top: var(--atlas-dock-top);
+  top: var(--stage-dock-top);
   right: calc(var(--atlas-edge) + var(--atlas-dock-w) + var(--atlas-gap));
   z-index: 1100;
   pointer-events: none;
@@ -1109,7 +1111,6 @@ button {
 }
 
 .vr-popup-overlay.is-atlas-collapsed {
-  top: 126px;
   right: calc(var(--atlas-edge) + var(--atlas-collapsed-w) + var(--atlas-gap));
 }
 
@@ -1280,6 +1281,7 @@ button {
 
   .vr-left-dock {
     bottom: 170px;
+    height: calc(100vh - var(--stage-dock-top) - 170px);
   }
 
   .vr-right-dock {
@@ -1303,6 +1305,7 @@ button {
   .vr-left-dock {
     top: 60px;
     bottom: 150px;
+    height: calc(100vh - 60px - 150px);
     width: calc(100vw - 32px);
   }
 
