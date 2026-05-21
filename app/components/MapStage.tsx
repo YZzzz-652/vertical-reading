@@ -55,6 +55,33 @@ const LEAFLET_ASSETS = [
   },
 ] as const;
 
+type GeoRegion = "cn" | "global";
+
+const MODERN_TILE_SOURCES: Record<
+  GeoRegion,
+  {
+    url: string;
+    options: Record<string, unknown>;
+  }
+> = {
+  cn: {
+    url: "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+    options: {
+      attribution: "&copy; AutoNavi",
+      maxZoom: 20,
+    },
+  },
+  global: {
+    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    options: {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+    },
+  },
+};
+
 function loadAsset(asset: (typeof LEAFLET_ASSETS)[number]) {
   return new Promise<void>((resolve, reject) => {
     if (document.getElementById(asset.id)) {
@@ -144,9 +171,11 @@ export function MapStage({
   const mapEl = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<LeafletMarker[]>([]);
+  const modernLayerRef = useRef<LeafletLayer | null>(null);
   const historicalLayersRef = useRef<LeafletLayer[]>([]);
   const historicalRequestRef = useRef(0);
   const [leaflet, setLeaflet] = useState<LeafletModule | null>(null);
+  const [geoRegion, setGeoRegion] = useState<GeoRegion>("global");
   const [query, setQuery] = useState("");
   const [selectedBooks, setSelectedBooks] = useState<Set<string>>(() => new Set());
   const [assetError, setAssetError] = useState("");
@@ -175,8 +204,19 @@ export function MapStage({
   useEffect(() => {
     let cancelled = false;
 
+    async function detectRegion() {
+      try {
+        const response = await fetch("/api/geo");
+        const data = (await response.json()) as { region?: string };
+        if (!cancelled && data.region === "cn") setGeoRegion("cn");
+      } catch (error) {
+        console.warn("Geo region detection failed", error);
+      }
+    }
+
     async function boot() {
       try {
+        detectRegion();
         await loadAsset(LEAFLET_ASSETS[0]);
         await loadAsset(LEAFLET_ASSETS[1]);
         if (!cancelled && window.L) setLeaflet(window.L);
@@ -201,13 +241,9 @@ export function MapStage({
       worldCopyJump: true,
     });
 
-    leaflet
-      .tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 20,
-      })
+    const tileSource = MODERN_TILE_SOURCES.global;
+    modernLayerRef.current = leaflet
+      .tileLayer(tileSource.url, tileSource.options)
       .addTo(map);
 
     leaflet.control.zoom({ position: "topright" }).addTo(map);
@@ -216,10 +252,22 @@ export function MapStage({
     return () => {
       removeLayers(historicalLayersRef.current);
       historicalLayersRef.current = [];
+      modernLayerRef.current?.remove();
+      modernLayerRef.current = null;
       map.remove();
       mapRef.current = null;
     };
   }, [leaflet]);
+
+  useEffect(() => {
+    if (!leaflet || !mapRef.current) return;
+
+    modernLayerRef.current?.remove();
+    const tileSource = MODERN_TILE_SOURCES[geoRegion];
+    modernLayerRef.current = leaflet
+      .tileLayer(tileSource.url, tileSource.options)
+      .addTo(mapRef.current);
+  }, [geoRegion, leaflet]);
 
   useEffect(() => {
     if (!leaflet || !mapRef.current) return;
