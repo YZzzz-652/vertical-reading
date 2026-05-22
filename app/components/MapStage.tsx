@@ -65,7 +65,7 @@ const MODERN_TILE_SOURCES: Record<
   }
 > = {
   cn: {
-    url: "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+    url: "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&customid=0d4fdc0cba7fbf7a90c9da521f6c9560",
     options: {
       attribution: "&copy; AutoNavi",
       maxZoom: 20,
