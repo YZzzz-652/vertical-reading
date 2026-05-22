@@ -30,7 +30,7 @@ button {
 .vr-app {
   --atlas-edge: 64px;
   --atlas-gap: var(--sp-5);
-  --atlas-open-w: min(280px, 28vw);
+  --atlas-open-w: 280px;
   --atlas-collapsed-w: 44px;
   --atlas-dock-w: var(--atlas-open-w);
   --stage-dock-top: 64px;
@@ -662,6 +662,8 @@ button {
 .vr-filter-panel .vr-panel-body--scroll {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -751,8 +753,7 @@ button {
 .vr-axis-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 18px;
-  padding-left: 6px;
+  gap: 14px 12px;
 }
 
 .vr-axis {
