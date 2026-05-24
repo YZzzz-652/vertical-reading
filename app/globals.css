@@ -1543,6 +1543,25 @@ button {
   position: relative;
 }
 
+.vr-event-book-group-rest {
+  display: grid;
+  max-height: 0;
+  gap: 8px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    max-height 0.35s var(--ease),
+    opacity 0.24s var(--ease),
+    transform 0.35s var(--ease);
+}
+
+.vr-event-book-group-rest.is-expanded {
+  max-height: 1200px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .expand-btn {
   position: absolute;
   top: 6px;
@@ -1557,9 +1576,8 @@ button {
   width: 28px;
   height: 22px;
   padding: 0 6px;
-  border: 0.5px solid rgba(168, 144, 112, 0.35);
-  border-radius: 5px;
-  background: rgba(168, 144, 112, 0.07);
+  border: 0;
+  background: transparent;
   cursor: pointer;
 }
 

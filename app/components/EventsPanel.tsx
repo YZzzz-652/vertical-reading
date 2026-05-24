@@ -316,11 +316,14 @@ export function EventsPanel({
                         </button>
                       )}
                     </div>
-                    {expanded &&
-                      group.rest.map((event) => (
-                        <div key={event.id}>{renderNovelRow(event)}</div>
-                      ))}
-                </li>
+                    {canExpand && (
+                      <div className={`vr-event-book-group-rest ${expanded ? "is-expanded" : ""}`}>
+                        {group.rest.map((event) => (
+                          <div key={event.id}>{renderNovelRow(event)}</div>
+                        ))}
+                      </div>
+                    )}
+                  </li>
                 );
               })}
               {novelGroups.length === 0 && <li className="vr-event-empty">这段时间内没有匹配的事件</li>}
