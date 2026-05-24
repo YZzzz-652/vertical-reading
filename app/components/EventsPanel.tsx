@@ -23,6 +23,17 @@ const regionLabels: Record<WorldEvent["region"], string> = {
   Africa: "非洲",
 };
 
+type NovelEventGroup = {
+  book: string;
+  representative: LiteraryEvent;
+  rest: LiteraryEvent[];
+};
+
+type ExpandedBooksState = {
+  rangeKey: string;
+  books: Set<string>;
+};
+
 export function EventsPanel({
   visible,
   years,
@@ -37,8 +48,13 @@ export function EventsPanel({
   const [bookPickerOpen, setBookPickerOpen] = useState(false);
   const [bookQuery, setBookQuery] = useState("");
   const [draftBooks, setDraftBooks] = useState<Set<string>>(() => new Set(selectedBooks));
+  const [expandedBooksState, setExpandedBooksState] = useState<ExpandedBooksState>(() => ({
+    rangeKey: "",
+    books: new Set(),
+  }));
   const searchRef = useRef<HTMLInputElement | null>(null);
   const [startYear, endYear] = years;
+  const rangeKey = `${startYear}:${endYear}`;
   const sorted = useMemo(
     () =>
       visible
@@ -46,6 +62,28 @@ export function EventsPanel({
         .sort((a, b) => (a.year ?? 0) - (b.year ?? 0)),
     [selectedBooks, visible],
   );
+  const novelGroups = useMemo<NovelEventGroup[]>(() => {
+    const groups = new Map<string, LiteraryEvent[]>();
+
+    sorted.forEach((event) => {
+      const book = event.book || "未命名作品";
+      const group = groups.get(book) ?? [];
+      group.push(event);
+      groups.set(book, group);
+    });
+
+    return [...groups.entries()]
+      .map(([book, events]) => {
+        const ordered = [...events].sort((a, b) => (a.year ?? 0) - (b.year ?? 0));
+        return {
+          book,
+          representative: ordered[0],
+          rest: ordered.slice(1),
+        };
+      })
+      .filter((group): group is NovelEventGroup => Boolean(group.representative))
+      .sort((a, b) => (a.representative.year ?? 0) - (b.representative.year ?? 0));
+  }, [sorted]);
   const filteredBooks = useMemo(() => {
     const needle = bookQuery.trim().toLowerCase();
     if (!needle) return allBooks;
@@ -59,6 +97,7 @@ export function EventsPanel({
     [startYear, endYear],
   );
   const allDraftSelected = allBooks.length > 0 && draftBooks.size === allBooks.length;
+  const expandedBooks = expandedBooksState.rangeKey === rangeKey ? expandedBooksState.books : new Set<string>();
 
   useEffect(() => {
     if (!bookPickerOpen) return;
@@ -94,6 +133,37 @@ export function EventsPanel({
   function confirmBooks() {
     onBooksChange(new Set(draftBooks));
     setBookPickerOpen(false);
+  }
+
+  function toggleExpandedBook(book: string) {
+    setExpandedBooksState((current) => {
+      const next = new Set(current.rangeKey === rangeKey ? current.books : []);
+      if (next.has(book)) {
+        next.delete(book);
+      } else {
+        next.add(book);
+      }
+      return { rangeKey, books: next };
+    });
+  }
+
+  function renderNovelRow(event: LiteraryEvent, hasExpandButton = false) {
+    return (
+      <button
+        type="button"
+        className={`vr-event-row ${hasExpandButton ? "has-expand-btn" : ""} ${event.id === selectedEventId ? "is-selected" : ""}`}
+        onClick={() => onPick(event)}
+      >
+        <div className="vr-event-year">{event.year}</div>
+        <div className="vr-event-meta">
+          <div className="vr-event-character">
+            {event.character}
+            <span className="vr-event-book"> · 《{event.book}》</span>
+          </div>
+          <div className="vr-event-desc">{event.event}</div>
+        </div>
+      </button>
+    );
   }
 
   return (
@@ -224,25 +294,36 @@ export function EventsPanel({
         {tab === "novels" ? (
           <>
             <ul className="vr-events-list">
-              {sorted.map((event) => (
-                <li key={event.id}>
-                  <button
-                    type="button"
-                    className={`vr-event-row ${event.id === selectedEventId ? "is-selected" : ""}`}
-                    onClick={() => onPick(event)}
-                  >
-                    <div className="vr-event-year">{event.year}</div>
-                    <div className="vr-event-meta">
-                      <div className="vr-event-character">
-                        {event.character}
-                        <span className="vr-event-book"> · 《{event.book}》</span>
-                      </div>
-                      <div className="vr-event-desc">{event.event}</div>
+              {novelGroups.map((group) => {
+                const expanded = expandedBooks.has(group.book);
+                const canExpand = group.rest.length > 0;
+
+                return (
+                  <li key={group.book} className="vr-event-book-group">
+                    <div className="vr-event-book-group-main">
+                      {renderNovelRow(group.representative, canExpand)}
+                      {canExpand && (
+                        <button
+                          type="button"
+                          className="expand-btn"
+                          aria-label={expanded ? `收起《${group.book}》其余条目` : `展开《${group.book}》其余条目`}
+                          aria-expanded={expanded}
+                          onClick={() => toggleExpandedBook(group.book)}
+                        >
+                          {Array.from({ length: expanded ? 1 : 3 }).map((_, index) => (
+                            <span key={index} className="line" />
+                          ))}
+                        </button>
+                      )}
                     </div>
-                  </button>
+                    {expanded &&
+                      group.rest.map((event) => (
+                        <div key={event.id}>{renderNovelRow(event)}</div>
+                      ))}
                 </li>
-              ))}
-              {sorted.length === 0 && <li className="vr-event-empty">这段时间内没有匹配的事件</li>}
+                );
+              })}
+              {novelGroups.length === 0 && <li className="vr-event-empty">这段时间内没有匹配的事件</li>}
             </ul>
           </>
         ) : (
