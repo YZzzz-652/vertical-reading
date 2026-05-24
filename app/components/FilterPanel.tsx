@@ -3,7 +3,6 @@
 import {
   CLASS_OPTIONS,
   EVENT_TYPE_GROUPS,
-  GENDER_OPTIONS,
   LOCATION_TYPE_OPTIONS,
   TIME_TYPE_OPTIONS,
   classIconSrc,
@@ -74,6 +73,10 @@ function ClassFilter({ selected, onToggle }: { selected: Set<string>; onToggle: 
 }
 
 function GenderFilter({ selected, onToggle }: { selected: Set<string>; onToggle: (value: string) => void }) {
+  const options = [
+    { value: "女", zh: "女性角色", en: "Female", image: "/icons/gender-female.png" },
+    { value: "男", zh: "男性角色", en: "Male", image: "/icons/gender-male.png" },
+  ];
   const labels: Record<string, string> = {
     男: "男性角色",
     女: "女性角色",
@@ -82,20 +85,27 @@ function GenderFilter({ selected, onToggle }: { selected: Set<string>; onToggle:
   return (
     <fieldset className="vr-filter-group">
       <legend>
-        性别 <em>Gender</em>
+        性别类型 <em>Gender</em>
       </legend>
       <div className="vr-gender-grid">
-        {GENDER_OPTIONS.map((option) => {
-          const on = selected.has(option);
+        {options.map((option) => {
+          const on = selected.has(option.value);
           return (
             <button
-              key={option}
+              key={option.value}
               type="button"
-              title={labels[option]}
+              title={labels[option.value]}
               className={`vr-gender-chip ${on ? "is-on" : "is-off"}`}
-              onClick={() => onToggle(option)}
+              onClick={() => onToggle(option.value)}
             >
-              {labels[option]}
+              <span className="vr-gender-portrait">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={option.image} alt={option.zh} />
+              </span>
+              <span className="vr-gender-label">
+                <span className="vr-gender-label-zh">{option.zh}</span>
+                <span className="vr-gender-label-en">{option.en}</span>
+              </span>
             </button>
           );
         })}
@@ -197,6 +207,32 @@ function TimeTypeFilter({ selected, onToggle }: { selected: Set<string>; onToggl
 }
 
 function LocationTypeFilter({ selected, onToggle }: { selected: Set<string>; onToggle: (value: string) => void }) {
+  function locationGlyph(option: string) {
+    if (option === "真实") {
+      return (
+        <svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+          <path d="M7 1.4C5 1.4 3.5 2.8 3.5 4.6c0 2.4 3.5 7 3.5 7s3.5-4.6 3.5-7C10.5 2.8 9 1.4 7 1.4z" />
+          <circle cx="7" cy="4.6" r="1" fill="var(--paper-cream)" />
+        </svg>
+      );
+    }
+
+    if (option === "虚构映射") {
+      return (
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" aria-hidden="true">
+          <path d="M7 1.4C5 1.4 3.5 2.8 3.5 4.6c0 2.4 3.5 7 3.5 7s3.5-4.6 3.5-7C10.5 2.8 9 1.4 7 1.4z" strokeDasharray="1.6 1.2" />
+          <circle cx="7" cy="4.6" r="1" />
+        </svg>
+      );
+    }
+
+    return (
+      <svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+        <path d="M7 1.5L8 5.5L12 7L8 8.5L7 12.5L6 8.5L2 7L6 5.5Z" />
+      </svg>
+    );
+  }
+
   return (
     <fieldset className="vr-filter-group">
       <legend>
@@ -205,7 +241,7 @@ function LocationTypeFilter({ selected, onToggle }: { selected: Set<string>; onT
       <div className="vr-pill-stack vr-pill-stack--row">
         {LOCATION_TYPE_OPTIONS.map((option) => {
           const on = selected.has(option);
-          const fictional = option === "虚构映射" || option === "虚构无对应";
+          const fictional = option === "虚构映射";
           return (
             <button
               key={option}
@@ -213,16 +249,7 @@ function LocationTypeFilter({ selected, onToggle }: { selected: Set<string>; onT
               className={`vr-meta-pill vr-loc-pill ${on ? "is-on" : "is-off"} ${fictional ? "is-fictional" : ""}`}
               onClick={() => onToggle(option)}
             >
-              <svg className="vr-meta-glyph" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-                <path
-                  d="M12 21s-7-6.5-7-12a7 7 0 1114 0c0 5.5-7 12-7 12z"
-                  fill="none"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  strokeDasharray={fictional ? "3 3" : "0"}
-                />
-                <circle cx="12" cy="9" r="2.5" fill="currentColor" />
-              </svg>
+              <span className="vr-meta-glyph">{locationGlyph(option)}</span>
               <span>{option}</span>
             </button>
           );
