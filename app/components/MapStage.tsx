@@ -402,6 +402,7 @@ export function MapStage({
               iconSize: [40, 40],
               iconAnchor: [20, 20],
             }),
+            zIndexOffset: event.id === selectedEventId ? 10000 : 0,
           })
           .on("click", () => onSelectEvent(event))
           .addTo(mapRef.current!),

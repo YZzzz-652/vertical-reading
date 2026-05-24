@@ -1593,7 +1593,7 @@ button {
 }
 
 .vr-event-row.is-selected {
-  background: var(--paper-93);
+  background: rgba(200, 168, 122, 0.10);
 }
 
 .vr-event-row--world {
