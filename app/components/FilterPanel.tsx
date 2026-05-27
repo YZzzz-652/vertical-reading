@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   CLASS_OPTIONS,
   EVENT_TYPE_GROUPS,
@@ -11,6 +12,7 @@ import {
 } from "../types";
 import { HISTORICAL_MAPS } from "../historical-maps";
 import { EventTypeGlyph } from "./EventTypeGlyph";
+import { IconSourceModal } from "./IconSourceModal";
 
 type FilterPanelProps = {
   filters: FilterState;
@@ -44,11 +46,30 @@ function MapVersionGroup({ value, onChange }: { value: MapVersion; onChange: (va
   );
 }
 
-function ClassFilter({ selected, onToggle }: { selected: Set<string>; onToggle: (value: string) => void }) {
+function InfoButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button type="button" className="vr-legend-info" aria-label={label} onClick={onClick}>
+      i
+    </button>
+  );
+}
+
+function ClassFilter({
+  selected,
+  onToggle,
+  onOpenSources,
+}: {
+  selected: Set<string>;
+  onToggle: (value: string) => void;
+  onOpenSources: () => void;
+}) {
   return (
     <fieldset className="vr-filter-group">
       <legend>
-        阶层 <em>Class</em>
+        <span>
+          阶层 <em>Class</em>
+        </span>
+        <InfoButton label="查看阶层图标来源" onClick={onOpenSources} />
       </legend>
       <div className="vr-avatar-grid">
         {CLASS_OPTIONS.map((option) => {
@@ -72,7 +93,15 @@ function ClassFilter({ selected, onToggle }: { selected: Set<string>; onToggle: 
   );
 }
 
-function GenderFilter({ selected, onToggle }: { selected: Set<string>; onToggle: (value: string) => void }) {
+function GenderFilter({
+  selected,
+  onToggle,
+  onOpenSources,
+}: {
+  selected: Set<string>;
+  onToggle: (value: string) => void;
+  onOpenSources: () => void;
+}) {
   const options = [
     { value: "女", zh: "女性角色", en: "Female", image: "/icons/gender-female.png" },
     { value: "男", zh: "男性角色", en: "Male", image: "/icons/gender-male.png" },
@@ -85,7 +114,10 @@ function GenderFilter({ selected, onToggle }: { selected: Set<string>; onToggle:
   return (
     <fieldset className="vr-filter-group">
       <legend>
-        性别类型 <em>Gender</em>
+        <span>
+          性别类型 <em>Gender</em>
+        </span>
+        <InfoButton label="查看性别图标来源" onClick={onOpenSources} />
       </legend>
       <div className="vr-gender-grid">
         {options.map((option) => {
@@ -260,6 +292,8 @@ function LocationTypeFilter({ selected, onToggle }: { selected: Set<string>; onT
 }
 
 export function FilterPanel({ filters, toggle, open, setOpen, mapVer, setMapVer }: FilterPanelProps) {
+  const [sourceModalType, setSourceModalType] = useState<"class" | "gender" | null>(null);
+
   return (
     <>
       <button
@@ -287,13 +321,23 @@ export function FilterPanel({ filters, toggle, open, setOpen, mapVer, setMapVer 
         </header>
         <div className="vr-panel-body vr-panel-body--scroll">
           <MapVersionGroup value={mapVer} onChange={setMapVer} />
-          <ClassFilter selected={filters.classes} onToggle={(value) => toggle("classes", value)} />
+          <ClassFilter
+            selected={filters.classes}
+            onToggle={(value) => toggle("classes", value)}
+            onOpenSources={() => setSourceModalType("class")}
+          />
           <EventTypeFilter selected={filters.eventTypes} onToggle={(value) => toggle("eventTypes", value)} />
-          <GenderFilter selected={filters.genders} onToggle={(value) => toggle("genders", value)} />
+          <GenderFilter
+            selected={filters.genders}
+            onToggle={(value) => toggle("genders", value)}
+            onOpenSources={() => setSourceModalType("gender")}
+          />
           <TimeTypeFilter selected={filters.timeTypes} onToggle={(value) => toggle("timeTypes", value)} />
           <LocationTypeFilter selected={filters.locationTypes} onToggle={(value) => toggle("locationTypes", value)} />
         </div>
       </section>
+
+      {sourceModalType && <IconSourceModal type={sourceModalType} onClose={() => setSourceModalType(null)} />}
     </>
   );
 }
