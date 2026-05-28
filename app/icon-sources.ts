@@ -6,6 +6,7 @@ export type IconSource = {
   year: string;
   country: string;
   imagePath: string;
+  aspectRatio: number;
 };
 
 export const CLASS_ICON_SOURCES: IconSource[] = [
@@ -17,6 +18,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1783",
     country: "法国",
     imagePath: "/icon-sources/贵族.jpg",
+    aspectRatio: 2500 / 3188,
   },
   {
     label: "平民",
@@ -26,6 +28,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1857",
     country: "法国",
     imagePath: "/icon-sources/平民.jpg",
+    aspectRatio: 5354 / 4006,
   },
   {
     label: "底层",
@@ -35,6 +38,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1849",
     country: "法国",
     imagePath: "/icon-sources/底层.jpg",
+    aspectRatio: 1315 / 800,
   },
   {
     label: "知识分子",
@@ -44,6 +48,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "约1830年代",
     country: "法国",
     imagePath: "/icon-sources/知识分子.jpg",
+    aspectRatio: 3500 / 4511,
   },
   {
     label: "军人",
@@ -53,6 +58,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1801",
     country: "法国",
     imagePath: "/icon-sources/军人.jpg",
+    aspectRatio: 3394 / 4134,
   },
   {
     label: "资产阶级",
@@ -62,6 +68,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1532",
     country: "德国",
     imagePath: "/icon-sources/资产阶级.jpg",
+    aspectRatio: 4096 / 4674,
   },
   {
     label: "宗教人士",
@@ -71,6 +78,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1650",
     country: "西班牙",
     imagePath: "/icon-sources/宗教人士.jpg",
+    aspectRatio: 491 / 600,
   },
   {
     label: "奴隶农奴",
@@ -80,6 +88,7 @@ export const CLASS_ICON_SOURCES: IconSource[] = [
     year: "1870–1873",
     country: "俄国",
     imagePath: "/icon-sources/奴隶农奴.jpg",
+    aspectRatio: 4586 / 2120,
   },
 ];
 
@@ -92,6 +101,7 @@ export const GENDER_ICON_SOURCES: IconSource[] = [
     year: "年代不详",
     country: "古希腊",
     imagePath: "/icon-sources/女性角色.jpg",
+    aspectRatio: 1019 / 2638,
   },
   {
     label: "男性角色",
@@ -101,5 +111,6 @@ export const GENDER_ICON_SOURCES: IconSource[] = [
     year: "1501–1504",
     country: "意大利",
     imagePath: "/icon-sources/男性角色.jpg",
+    aspectRatio: 3840 / 5626,
   },
 ];

@@ -12,10 +12,9 @@ type IconSourceModalProps = {
 export function IconSourceModal({ type, onClose }: IconSourceModalProps) {
   const items = type === "class" ? CLASS_ICON_SOURCES : GENDER_ICON_SOURCES;
   const [index, setIndex] = useState(0);
-  const [imageRatios, setImageRatios] = useState<Record<string, number>>({});
   const portalRoot = typeof document === "undefined" ? null : document.body;
   const current = items[index];
-  const currentRatio = imageRatios[current.label] ?? 1;
+  const currentRatio = current.aspectRatio;
   const dialogLabel = type === "class" ? "阶层图标来源" : "性别图标来源";
 
   useEffect(() => {
@@ -39,17 +38,6 @@ export function IconSourceModal({ type, onClose }: IconSourceModalProps) {
 
   function step(delta: number) {
     setIndex((value) => Math.min(items.length - 1, Math.max(0, value + delta)));
-  }
-
-  function rememberRatio(label: string, image: HTMLImageElement) {
-    if (!image.naturalWidth || !image.naturalHeight) return;
-    setImageRatios((currentRatios) => {
-      if (currentRatios[label]) return currentRatios;
-      return {
-        ...currentRatios,
-        [label]: image.naturalWidth / image.naturalHeight,
-      };
-    });
   }
 
   if (!portalRoot) return null;
@@ -92,7 +80,6 @@ export function IconSourceModal({ type, onClose }: IconSourceModalProps) {
                 <img
                   src={item.imagePath}
                   alt={`${item.label}图标来源：${item.titleZh}`}
-                  onLoad={(event) => rememberRatio(item.label, event.currentTarget)}
                 />
               </div>
             ))}
