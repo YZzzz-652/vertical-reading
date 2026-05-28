@@ -101,8 +101,7 @@ export const HISTORICAL_MAPS: HistoricalMapOption[] = [
     yearRange: "1925–1999",
     layers: [
       {
-        tileUrl:
-          "https://wmts.oldmapsonline.org/maps/9c5e9838-5e2e-5c1a-be48-785d09b3bed3/2017-02-20T14:25:19.132722Z/{z}/{x}/{y}.png?key=lrETGYmRr771z5PFmpIU",
+        tileUrl: "https://verticalreading-map.oss-cn-shanghai.aliyuncs.com/tiles-1900/{z}/{x}/{y}.png",
         minzoom: 2,
         maxzoom: 8,
       },
