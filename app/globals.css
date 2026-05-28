@@ -1859,6 +1859,10 @@ button {
   transform: translate(-50%, -50%);
 }
 
+.vr-artpop.is-portrait {
+  width: min(880px, 94vw);
+}
+
 .vr-artpop-head {
   display: flex;
   align-items: baseline;
@@ -1931,10 +1935,18 @@ button {
   position: relative;
   flex: 1 1 auto;
   display: grid;
+  grid-template-columns: 1fr;
   grid-template-rows: minmax(0, 1fr) auto;
   min-height: 0;
   padding: 22px 56px 18px;
   gap: 18px;
+}
+
+.vr-artpop.is-portrait .vr-artpop-body {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  padding: 28px 56px 26px;
+  gap: 32px;
 }
 
 .vr-artpop-stage {
@@ -1964,8 +1976,8 @@ button {
 
 .vr-artpop-slide img {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -1978,9 +1990,19 @@ button {
 .vr-artpop-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 10px;
   min-width: 0;
+}
+
+.vr-artpop.is-portrait .vr-artpop-info {
+  align-items: flex-start;
+  justify-content: center;
+  padding-right: 8px;
+  text-align: left;
+}
+
+.vr-artpop:not(.is-portrait) .vr-artpop-info {
+  align-items: center;
   padding-top: 2px;
   text-align: center;
 }
@@ -2041,9 +2063,13 @@ button {
 }
 
 .vr-artpop-rule {
-  align-self: center;
   width: 64px;
   height: 1px;
+  background: linear-gradient(90deg, rgba(200, 168, 122, 0.85), transparent);
+}
+
+.vr-artpop:not(.is-portrait) .vr-artpop-rule {
+  align-self: center;
   margin: 2px 0 4px;
   background: linear-gradient(90deg, transparent, rgba(200, 168, 122, 0.85), transparent);
 }

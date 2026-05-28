@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CLASS_ICON_SOURCES, GENDER_ICON_SOURCES } from "../icon-sources";
 
@@ -12,16 +12,11 @@ type IconSourceModalProps = {
 export function IconSourceModal({ type, onClose }: IconSourceModalProps) {
   const items = type === "class" ? CLASS_ICON_SOURCES : GENDER_ICON_SOURCES;
   const [index, setIndex] = useState(0);
+  const [imageRatios, setImageRatios] = useState<Record<string, number>>({});
   const portalRoot = typeof document === "undefined" ? null : document.body;
   const current = items[index];
-
-  const title = useMemo(
-    () =>
-      type === "class"
-        ? { zh: "阶层图标来源", en: "Class Iconography · Sources" }
-        : { zh: "性别图标来源", en: "Gender Iconography · Sources" },
-    [type],
-  );
+  const currentRatio = imageRatios[current.label] ?? 1;
+  const dialogLabel = type === "class" ? "阶层图标来源" : "性别图标来源";
 
   useEffect(() => {
     document.body.classList.add("vr-icon-source-modal-open");
@@ -46,17 +41,28 @@ export function IconSourceModal({ type, onClose }: IconSourceModalProps) {
     setIndex((value) => Math.min(items.length - 1, Math.max(0, value + delta)));
   }
 
+  function rememberRatio(label: string, image: HTMLImageElement) {
+    if (!image.naturalWidth || !image.naturalHeight) return;
+    setImageRatios((currentRatios) => {
+      if (currentRatios[label]) return currentRatios;
+      return {
+        ...currentRatios,
+        [label]: image.naturalWidth / image.naturalHeight,
+      };
+    });
+  }
+
   if (!portalRoot) return null;
 
   return createPortal(
     <>
       <button type="button" className="vr-artpop-scrim is-open" aria-label="关闭图标来源弹窗" onClick={onClose} />
-      <section className="vr-artpop is-open" role="dialog" aria-modal="true" aria-label={title.zh}>
+      <section className={`vr-artpop is-open ${currentRatio < 1 ? "is-portrait" : ""}`} role="dialog" aria-modal="true" aria-label={dialogLabel}>
         <header className="vr-artpop-head">
           <div className="vr-artpop-head-l">
             <h2 className="vr-artpop-source-title">
-              <span>{title.zh}</span>
-              <em>{title.en}</em>
+              <span>来源</span>
+              <em>Source</em>
             </h2>
           </div>
           <button type="button" className="vr-artpop-close" aria-label="关闭" onClick={onClose}>
@@ -83,7 +89,11 @@ export function IconSourceModal({ type, onClose }: IconSourceModalProps) {
             {items.map((item, itemIndex) => (
               <div key={item.label} className={`vr-artpop-slide ${itemIndex === index ? "is-active" : ""}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.imagePath} alt={`${item.label}图标来源：${item.titleZh}`} />
+                <img
+                  src={item.imagePath}
+                  alt={`${item.label}图标来源：${item.titleZh}`}
+                  onLoad={(event) => rememberRatio(item.label, event.currentTarget)}
+                />
               </div>
             ))}
           </div>
