@@ -103,7 +103,7 @@ export const HISTORICAL_MAPS: HistoricalMapOption[] = [
       {
         tileUrl: "https://verticalreading-map.oss-cn-shanghai.aliyuncs.com/tiles-1900/{z}/{x}/{y}.png",
         minzoom: 2,
-        maxzoom: 8,
+        maxzoom: 6,
       },
     ],
   },
