@@ -196,17 +196,19 @@
 
 ### ⏳ 历史地图瓦片自托管
 - 提出：2026-05-25
-- 当前进度：方案已决策，待执行。20世纪历史地图瓦片源为境外服务，墙内访问超时；决定自己下载地图、做切片、托管到阿里云 OSS，彻底解决墙内外访问问题
+- 当前进度：阿里云 OSS bucket 已创建（verticalreading-map，华东2），ossutil 已配置。第一次切片因坐标系偏移作废，旧瓦片已清空（OSS + 本地）。待重新执行：重投影 → z=2-3 验证 → 全量切片 → 上传 → 接入前端
 - 子任务：
-  - [ ] 在 David Rumsey 找到当前使用的 20 世纪地图，导出 GCP 控制点文件
-  - [ ] 下载地图高清扫描图
-  - [ ] 让 Codex 写配准 + 切片脚本（基于 GDAL），本地运行
-  - [ ] 切好的瓦片上传阿里云 OSS
-  - [ ] Codex 将瓦片 URL 接入项目，替换现有境外瓦片源
+  - [x] 在 David Rumsey 找到 20 世纪地图 GeoTIFF 并下载
+  - [x] 安装 GDAL、ossutil，配置阿里云 OSS
+  - [x] 创建 bucket verticalreading-map（华东2，公共读）
+  - [x] Codex 更新 historical-maps.ts 瓦片 URL 指向 OSS
+  - [ ] gdalwarp 重投影修正坐标系偏移
+  - [ ] z=2-3 小批量切片验证坐标对齐
+  - [ ] 全量切片 z=2-8 并上传 OSS
   - [ ] 验证墙内外均可正常访问
 - 优先级：近期
 - 阻塞：无
-- 下次接手提示：David Rumsey Georeferencer 里有志愿者打好的 GCP 控制点，导出后直接给 GDAL 使用，省去手动配准；阿里云账号已有，OSS 需新建 bucket
+- 下次接手提示：重投影命令和切片命令已确认，直接交 Codex 执行即可；验证用浏览器打开 `https://verticalreading-map.oss-cn-shanghai.aliyuncs.com/tiles-1900/2/0/0.png` 确认可访问后再接入前端
 
 ### 💡 早期古地图节点（唐/宋/元）
 - 提出：2026-05-16
