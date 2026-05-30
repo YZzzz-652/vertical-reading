@@ -57,28 +57,57 @@ const LEAFLET_ASSETS = [
 
 type GeoRegion = "cn" | "global";
 
+type TileLayerSource = {
+  url: string;
+  options: Record<string, unknown>;
+};
+
+const TIANDITU_TK = process.env.NEXT_PUBLIC_TIANDITU_TK;
+
 const MODERN_TILE_SOURCES: Record<
   GeoRegion,
   {
-    url: string;
-    options: Record<string, unknown>;
+    layers: TileLayerSource[];
   }
 > = {
   cn: {
-    url: "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&customid=0d4fdc0cba7fbf7a90c9da521f6c9560",
-    options: {
-      attribution: "&copy; AutoNavi",
-      maxZoom: 20,
-    },
+    layers: TIANDITU_TK
+      ? [
+          {
+            url: `https://t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_TK}`,
+            options: {
+              attribution: '&copy; <a href="https://www.tianditu.gov.cn/">天地图</a>',
+              subdomains: "01234567",
+              maxNativeZoom: 18,
+              maxZoom: 20,
+              zIndex: 100,
+            },
+          },
+          {
+            url: `https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_TK}`,
+            options: {
+              attribution: '&copy; <a href="https://www.tianditu.gov.cn/">天地图</a>',
+              subdomains: "01234567",
+              maxNativeZoom: 18,
+              maxZoom: 20,
+              zIndex: 110,
+            },
+          },
+        ]
+      : [],
   },
   global: {
-    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-    options: {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 20,
-    },
+    layers: [
+      {
+        url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        options: {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 20,
+        },
+      },
+    ],
   },
 };
 
@@ -171,7 +200,7 @@ export function MapStage({
   const mapEl = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<LeafletMarker[]>([]);
-  const modernLayerRef = useRef<LeafletLayer | null>(null);
+  const modernLayersRef = useRef<LeafletLayer[]>([]);
   const historicalLayersRef = useRef<LeafletLayer[]>([]);
   const historicalRequestRef = useRef(0);
   const [leaflet, setLeaflet] = useState<LeafletModule | null>(null);
@@ -241,10 +270,9 @@ export function MapStage({
       worldCopyJump: true,
     });
 
-    const tileSource = MODERN_TILE_SOURCES.global;
-    modernLayerRef.current = leaflet
-      .tileLayer(tileSource.url, tileSource.options)
-      .addTo(map);
+    modernLayersRef.current = MODERN_TILE_SOURCES.global.layers.map((layer) =>
+      leaflet.tileLayer(layer.url, layer.options).addTo(map),
+    );
 
     leaflet.control.zoom({ position: "topright" }).addTo(map);
     mapRef.current = map;
@@ -252,8 +280,8 @@ export function MapStage({
     return () => {
       removeLayers(historicalLayersRef.current);
       historicalLayersRef.current = [];
-      modernLayerRef.current?.remove();
-      modernLayerRef.current = null;
+      removeLayers(modernLayersRef.current);
+      modernLayersRef.current = [];
       map.remove();
       mapRef.current = null;
     };
@@ -262,11 +290,16 @@ export function MapStage({
   useEffect(() => {
     if (!leaflet || !mapRef.current) return;
 
-    modernLayerRef.current?.remove();
     const tileSource = MODERN_TILE_SOURCES[geoRegion];
-    modernLayerRef.current = leaflet
-      .tileLayer(tileSource.url, tileSource.options)
-      .addTo(mapRef.current);
+
+    if (geoRegion === "cn" && !TIANDITU_TK) {
+      return;
+    }
+
+    removeLayers(modernLayersRef.current);
+    modernLayersRef.current = tileSource.layers.map((layer) =>
+      leaflet.tileLayer(layer.url, layer.options).addTo(mapRef.current!),
+    );
   }, [geoRegion, leaflet]);
 
   useEffect(() => {
@@ -409,7 +442,9 @@ export function MapStage({
       );
   }, [leaflet, onSelectEvent, selectedBooks, selectedEventId, visible]);
 
-  const status = isLoading ? "正在读取文学时空数据..." : loadError || assetError;
+  const tiandituConfigError =
+    geoRegion === "cn" && !TIANDITU_TK ? "缺少 NEXT_PUBLIC_TIANDITU_TK，已停止加载墙内天地图底图。" : "";
+  const status = isLoading ? "正在读取文学时空数据..." : loadError || assetError || tiandituConfigError;
 
   return (
     <section className={`vr-screen vr-stage map-${mapVer} ${active ? "is-active" : ""}`}>
