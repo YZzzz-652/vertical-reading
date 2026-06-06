@@ -9,7 +9,7 @@
 - **产品定位**：一个"垂直穿透读书"的文学可视化平台，让用户用上帝视角看到不同作品里的人物在同一时空下的平行命运。
 - **GitHub 仓库**：https://github.com/YZzzz-652/vertical-reading
 - **本地项目路径**：/Users/yizhongwang/Library/CloudStorage/OneDrive-共享的库-Onedrive/VibeCoding Project/Vertical Reading/vertical-reading
-- **产品细节、技术栈、当前进度**：见《项目启动文档》
+- **产品细节、技术栈、当前进度**：见 `working-docs/VerticalReading_项目启动文档.md`
 
 ---
 
@@ -39,30 +39,30 @@
 | 文档 | 职责 | 类型 | 读取时机 |
 |---|---|---|---|
 | **AGENTS.md** | AI 协作规范（本文件）+ 文档路由表 | 规范型 | 脊柱·每次读 |
-| **VerticalReading_项目启动文档.md** | 产品薄背景、技术栈、当前待办、前端已知问题 | 现状型 | 脊柱·每次读 |
-| **VerticalReading_文档维护规范.md** | 颗粒度、触发条件、维护规则、归属表、归档规则 | 规范型 | 更新文档前必读（含收尾 /update） |
-| **VerticalReading_决策日志.md** | 上线后决策 + 当前目录 + 归档地图 | 累积型 | 按需 |
-| **VerticalReading_Database_启动文档.md** | 数据生产规范（字段、合法值、密度规则） | 规范型 | 按需（数据工作） |
-| **VerticalReading_书目清单.md** | 数据生产进度记录（动态：哪些书、状态、条数、ID 前缀） | 累积型 | 按需（数据扩充必读） |
-| **VerticalReading_设计规范.md** | 设计意图与不可违反的设计原则 + 指针 | 规范型 | 按需（设计系统级改动） |
-| **VerticalReading_决策日志_归档_上线前.md** | 上线前历史决策（原样封存） | 累积型 | 默认不读（查史才开） |
+| **working-docs/VerticalReading_项目启动文档.md** | 产品薄背景、技术栈、当前待办、前端已知问题 | 现状型 | 脊柱·每次读 |
+| **working-docs/VerticalReading_文档维护规范.md** | 颗粒度、触发条件、维护规则、归属表、归档规则 | 规范型 | 更新文档前必读（含收尾 /update） |
+| **working-docs/VerticalReading_决策日志.md** | 上线后决策 + 当前目录 + 归档地图 | 累积型 | 按需 |
+| **working-docs/VerticalReading_Database_启动文档.md** | 数据生产规范（字段、合法值、密度规则） | 规范型 | 按需（数据工作） |
+| **working-docs/VerticalReading_书目清单.md** | 数据生产进度记录（动态：哪些书、状态、条数、ID 前缀） | 累积型 | 按需（数据扩充必读） |
+| **working-docs/VerticalReading_设计规范.md** | 设计意图与不可违反的设计原则 + 指针 | 规范型 | 按需（设计系统级改动） |
+| **working-docs/VerticalReading_决策日志_归档_上线前.md** | 上线前历史决策（原样封存） | 累积型 | 默认不读（查史才开） |
 
 ---
 
 ## 五、文档路由（读时·每次开场用）
 
-开场先读脊柱（AGENTS + 项目启动文档），了解本任务的约束与开展方式；再据任务类型按下表决定还要读哪些文档。脊柱每次都读，不在表内重复。
+开场先读脊柱（根目录 `AGENTS.md` + `working-docs/VerticalReading_项目启动文档.md`），了解本任务的约束与开展方式；再据任务类型按下表决定还要读哪些文档。脊柱每次都读，不在表内重复。
 
 | 任务类型 | 额外必读 | 按需读 | 默认不读 |
 |---|---|---|---|
-| 状态查询 / 回顾（/status /review） | — | 决策日志（目录 + 地图即够） | 数据库、设计、归档、维护规范 |
-| 数据扩充 / 生产 | 数据库文档 + 书目清单 | 决策日志（数据类） | 设计、归档、维护规范 |
+| 状态查询 / 回顾（/status /review） | — | `working-docs/VerticalReading_决策日志.md`（目录 + 地图即够） | 数据库、设计、归档、维护规范 |
+| 数据扩充 / 生产 | `working-docs/VerticalReading_Database_启动文档.md` + `working-docs/VerticalReading_书目清单.md` | 决策日志（数据类） | 设计、归档、维护规范 |
 | 前端优化 / 修 bug | — | 决策日志（前端类） | 数据库、设计、归档、维护规范 |
-| 设计系统级改动 | 设计规范 + tokens.css | 决策日志（设计类） | 数据库、归档、维护规范 |
-| 文档维护 / 收尾 /update | **文档维护规范** | 决策日志（流程类） | 数据库、设计、归档 |
-| 翻历史 / 怕重蹈被否方案 | 加读 决策日志归档（对应分类） | — | — |
+| 设计系统级改动 | `working-docs/VerticalReading_设计规范.md` + `app/tokens.css` | 决策日志（设计类） | 数据库、归档、维护规范 |
+| 文档维护 / 收尾 /update | **`working-docs/VerticalReading_文档维护规范.md`** | 决策日志（流程类） | 数据库、设计、归档 |
+| 翻历史 / 怕重蹈被否方案 | 加读 `working-docs/VerticalReading_决策日志_归档_上线前.md`（对应分类） | — | — |
 
-> 写文档时"怎么写、内容放哪、怎么归档"——全部见《VerticalReading_文档维护规范.md》，**每次更新文档前（含每次对话收尾的 /update）必读**。本章只解决"读什么"，不解决"怎么写"。
+> 写文档时"怎么写、内容放哪、怎么归档"——全部见 `working-docs/VerticalReading_文档维护规范.md`，**每次更新文档前（含每次对话收尾的 /update）必读**。本章只解决"读什么"，不解决"怎么写"。
 
 ---
 
@@ -87,7 +87,7 @@
 
 ### /update
 基于本次对话内容，生成标准文档更新指令（交 Codex 执行）。
-**具体的输出范围、【】块格式、各文档归属与 commit 规则，见《VerticalReading_文档维护规范》「文档更新指令（/update）规范」一节，执行前必读。** 本处不重复。
+**具体的输出范围、【】块格式、各文档归属与 commit 规则，见 `working-docs/VerticalReading_文档维护规范.md`「文档更新指令（/update）规范」一节，执行前必读。** 本处不重复。
 
 ### /next
 基于当前项目状态，输出优先级最高的 3 件事，说明排序理由。
@@ -98,7 +98,7 @@
 
 ### 启动流程
 每次新对话开启时：
-1. 等待用户上传**脊柱两份**（AGENTS + 项目启动文档）；本次任务按 §5 路由需要的其它文档，用户一并上传
+1. 等待用户上传**脊柱两份**（根目录 `AGENTS.md` + `working-docs/VerticalReading_项目启动文档.md`）；本次任务按 §5 路由需要的其它文档，用户一并上传
 2. 回顾 / 收尾类任务，用户同时粘贴 Codex 端 `git log --oneline -10` 输出
 3. 读完后输出 /status 快照
 4. 等待指令
@@ -113,7 +113,7 @@
 ### 对话结束流程
 对话结束前必须依次执行：
 1. /review（含 git log 对照）
-2. 读《文档维护规范》，再 /update（生成更新指令）——若未上传维护规范，提示用户补传
+2. 读 `working-docs/VerticalReading_文档维护规范.md`，再 /update（生成更新指令）——若未上传维护规范，提示用户补传
 3. 提示用户复制指令给 Codex 执行
 
 ---
@@ -122,7 +122,7 @@
 
 ### 启动流程
 1. `git pull origin main`（拉取最新）
-2. 读取**脊柱两份**（AGENTS + 项目启动文档）
+2. 读取**脊柱两份**（根目录 `AGENTS.md` + `working-docs/VerticalReading_项目启动文档.md`）
 3. 按本次任务依 §5 路由读取其余需要的文档（不再无差别读全部 MD）
 4. 简要告诉用户当前项目状态，等待指令
 
@@ -131,7 +131,7 @@
 - 严禁：飞书表格字段结构、单选合法值列表、写入 App Secret
 
 ### 接收 /update 指令后的处理流程
-0. **先读《VerticalReading_文档维护规范.md》**，按其归属表确认每条变化进哪个文件
+0. **先读 `working-docs/VerticalReading_文档维护规范.md`**，按其归属表确认每条变化进哪个文件
 1. 读取需要修改的文件，确认当前内容
 2. 按【】块逐文件修改
 3. 每个文件单独一次 commit：`git add [文件名] → git commit → git push origin main`
