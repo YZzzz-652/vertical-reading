@@ -13,14 +13,14 @@
 | 文档 / 段落 | 颗粒度 | 示例 |
 |---|---|---|
 | AGENTS.md | 极粗 | "新增 /brief 指令"这一级，不到指令实现细节；路由用粗映射表 |
-| VerticalReading_文档维护规范.md（本文件） | 中 | 一条规则一段，不下到逐字段示例 |
-| VerticalReading_项目启动文档.md · 技术栈 | 粗 | "使用 Leaflet"，不到具体配置 |
-| VerticalReading_项目启动文档.md · 当前待办 | 细（子任务级） | "气泡卡片关闭按钮位置已选方案 B" |
-| VerticalReading_项目启动文档.md · 已知问题 | 中 | 一条坑：现象 + 解决 + 日期 |
-| VerticalReading_决策日志.md | 中 | 一条决策一个条目，含原因 + 否定方案 |
-| VerticalReading_书目清单.md | 中（单本级） | 单本书的状态、条数、ID 前缀 |
-| VerticalReading_Database_启动文档.md | 中 | 字段级定义、生产规则 |
-| VerticalReading_设计规范.md | 中 | 设计原则与意图；精确值不在此（在 tokens.css） |
+| `working-docs/VerticalReading_文档维护规范.md`（本文件） | 中 | 一条规则一段，不下到逐字段示例 |
+| `working-docs/VerticalReading_项目启动文档.md` · 技术栈 | 粗 | "使用 Leaflet"，不到具体配置 |
+| `working-docs/VerticalReading_项目启动文档.md` · 当前待办 | 细（子任务级） | "气泡卡片关闭按钮位置已选方案 B" |
+| `working-docs/VerticalReading_项目启动文档.md` · 已知问题 | 中 | 一条坑：现象 + 解决 + 日期 |
+| `working-docs/VerticalReading_决策日志.md` | 中 | 一条决策一个条目，含原因 + 否定方案 |
+| `working-docs/VerticalReading_书目清单.md` | 中（单本级） | 单本书的状态、条数、ID 前缀 |
+| `working-docs/VerticalReading_Database_启动文档.md` | 中 | 字段级定义、生产规则 |
+| `working-docs/VerticalReading_设计规范.md` | 中 | 设计原则与意图；精确值不在此（在 tokens.css） |
 
 ---
 
@@ -29,14 +29,14 @@
 不要凭"重要性"主观判断，按客观触发条件更新：
 
 - **AGENTS.md**：仅当协作流程、指令定义、文档结构、路由变化时更新。日常工作不动。
-- **VerticalReading_文档维护规范.md（本文件）**：仅当颗粒度/触发/维护/归属/归档/更新指令规则本身变化时更新。
-- **VerticalReading_项目启动文档.md · 当前待办**：每次对话结束时检查，状态推进、新增待办、完成移除。
-- **VerticalReading_项目启动文档.md · 已知问题**：发现新的前端/构建/通用坑时追加。
-- **VerticalReading_项目启动文档.md · 技术栈**：仅在选型决策变化时更新。
-- **VerticalReading_决策日志.md**：每次对话产生新决策时追加到「当前」。所有改变项目方向的判断都算决策，包括"否定某方案"本身。
-- **VerticalReading_设计规范.md**：仅当设计原则或意图变化时更新（精确值改 tokens.css，不动本文档）。
-- **VerticalReading_Database_启动文档.md**：数据生产规则、字段定义、合法值、密度规则变化时更新（管"怎么产"）。
-- **VerticalReading_书目清单.md**：开始 / 完成一本书时更新该书状态与条数；扩库新增书目时追加行（管"产了哪些、产到哪"）。
+- **`working-docs/VerticalReading_文档维护规范.md`（本文件）**：仅当颗粒度/触发/维护/归属/归档/更新指令规则本身变化时更新。
+- **`working-docs/VerticalReading_项目启动文档.md` · 当前待办**：每次对话结束时检查，状态推进、新增待办、完成移除。
+- **`working-docs/VerticalReading_项目启动文档.md` · 已知问题**：发现新的前端/构建/通用坑时追加。
+- **`working-docs/VerticalReading_项目启动文档.md` · 技术栈**：仅在选型决策变化时更新。
+- **`working-docs/VerticalReading_决策日志.md`**：每次对话产生新决策时追加到「当前」。所有改变项目方向的判断都算决策，包括"否定某方案"本身。
+- **`working-docs/VerticalReading_设计规范.md`**：仅当设计原则或意图变化时更新（精确值改 tokens.css，不动本文档）。
+- **`working-docs/VerticalReading_Database_启动文档.md`**：数据生产规则、字段定义、合法值、密度规则变化时更新（管"怎么产"）。
+- **`working-docs/VerticalReading_书目清单.md`**：开始 / 完成一本书时更新该书状态与条数；扩库新增书目时追加行（管"产了哪些、产到哪"）。
 
 **重要原则**：对话里讨论了但没产生决定的事情不进文档。悬而未决的放到"当前待办"的"待决定"子项里，不进决策日志。
 
@@ -80,7 +80,7 @@
 - **何时归档**：按阶段/章节封顶时归档，**不按固定时钟**（避免切出一堆边界随意的小文件）。如"上线前"是一章。
 - **怎么归档**：把该阶段条目**整体移入**对应归档文件，原样不改、不删、不压缩。
 - **归档地图**：移完后在 决策日志「当前」顶部「归档地图」加一段两三行摘要（覆盖时段 + 主要决策 + 条数）；同一段复制到归档文件档头。归档文件默认不读，靠这段地图导航。
-- **文件命名**：语义化，如 `VerticalReading_决策日志_归档_上线前.md`，不用编号。
+- **文件命名**：工作文档统一放在 `working-docs/` 下，文件名语义化，如 `working-docs/VerticalReading_决策日志_归档_上线前.md`，不用编号。
 - **何时再拆下一个归档文件**：当某个归档文件大到"查任一类都要翻一堆无关条目"时，再按分类拆。现阶段只一个归档文件，不提前搭多文件机制。
 
 ---
@@ -113,7 +113,7 @@ Claude 收尾时按本节生成「文档更新指令」交 Codex 执行。AGENTS
 
 请按以下内容更新文档并推送到 GitHub，每个文件单独一次 commit。
 
-【VerticalReading_决策日志.md】
+【working-docs/VerticalReading_决策日志.md】
 在「[对应分类]」下新增：
 [日期] · [标题]
 - 决定：
@@ -121,17 +121,17 @@ Claude 收尾时按本节生成「文档更新指令」交 Codex 执行。AGENTS
 - 否定方案：（无则不写）
 （同时更新顶部「当前目录」）
 
-【VerticalReading_项目启动文档.md】
+【working-docs/VerticalReading_项目启动文档.md】
 将「[段落名：当前待办 / 已知问题 / 技术栈 等]」更新为：
 [新内容]
 
-【VerticalReading_Database_启动文档.md】
+【working-docs/VerticalReading_Database_启动文档.md】
 [按字段 / 合法值 / 生产规则的对应位置更新]
 
-【VerticalReading_书目清单.md】
+【working-docs/VerticalReading_书目清单.md】
 [更新某书状态与条数；或扩库时追加新书行]
 
-【VerticalReading_设计规范.md】
+【working-docs/VerticalReading_设计规范.md】
 将「[段落名]」更新为：
 [新内容]
 
@@ -139,7 +139,7 @@ Claude 收尾时按本节生成「文档更新指令」交 Codex 执行。AGENTS
 （仅当协作流程 / 指令 / 文档结构 / 路由变化时）将「[章节]」更新为：
 [新内容]
 
-【VerticalReading_文档维护规范.md】
+【working-docs/VerticalReading_文档维护规范.md】
 （仅当颗粒度 / 触发 / 维护 / 归属 / 归档 / 更新指令规则本身变化时）将「[节]」更新为：
 [新内容]
 
