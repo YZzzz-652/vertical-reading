@@ -29,6 +29,7 @@ type LeafletModule = {
   };
   divIcon: (options: Record<string, unknown>) => unknown;
   map: (element: HTMLElement, options: Record<string, unknown>) => LeafletMap;
+  maplibreGL?: (options: Record<string, unknown>) => LeafletLayer;
   marker: (latlng: LatLng, options: Record<string, unknown>) => LeafletMarker;
   tileLayer: (
     urlTemplate: string,
@@ -42,27 +43,54 @@ declare global {
   }
 }
 
-const LEAFLET_ASSETS = [
+const MAP_ASSETS = [
   {
     id: "leaflet-css",
     type: "style",
     href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
   },
   {
+    id: "maplibre-css",
+    type: "style",
+    href: "https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css",
+  },
+  {
     id: "leaflet-js",
     type: "script",
     src: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+  },
+  {
+    id: "maplibre-js",
+    type: "script",
+    src: "https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js",
+  },
+  {
+    id: "maplibre-leaflet-js",
+    type: "script",
+    src: "https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js",
   },
 ] as const;
 
 type GeoRegion = "cn" | "global";
 
-type TileLayerSource = {
-  url: string;
-  options: Record<string, unknown>;
-};
+type TileLayerSource =
+  | {
+      kind: "raster";
+      url: string;
+      options: Record<string, unknown>;
+    }
+  | {
+      kind: "vector";
+      style: string;
+    };
 
 const TIANDITU_TK = process.env.NEXT_PUBLIC_TIANDITU_TK;
+// Raster Voyager tiles now answer with an "API KEY REQUIRED" placeholder unless
+// a CARTO key is present. The matching vector style still draws without one.
+const CARTO_API_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY?.trim();
+const CARTO_VOYAGER_STYLE = CARTO_API_KEY
+  ? `https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json?key=${encodeURIComponent(CARTO_API_KEY)}`
+  : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 const MODERN_TILE_SOURCES: Record<
   GeoRegion,
@@ -74,6 +102,7 @@ const MODERN_TILE_SOURCES: Record<
     layers: TIANDITU_TK
       ? [
           {
+            kind: "raster",
             url: `https://t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_TK}`,
             options: {
               attribution: '&copy; <a href="https://www.tianditu.gov.cn/">天地图</a>',
@@ -84,6 +113,7 @@ const MODERN_TILE_SOURCES: Record<
             },
           },
           {
+            kind: "raster",
             url: `https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_TK}`,
             options: {
               attribution: '&copy; <a href="https://www.tianditu.gov.cn/">天地图</a>',
@@ -99,19 +129,28 @@ const MODERN_TILE_SOURCES: Record<
   global: {
     layers: [
       {
-        url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        options: {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 20,
-        },
+        kind: "vector",
+        style: CARTO_VOYAGER_STYLE,
       },
     ],
   },
 };
 
-function loadAsset(asset: (typeof LEAFLET_ASSETS)[number]) {
+function addModernLayer(leaflet: LeafletModule, layer: TileLayerSource, map: LeafletMap) {
+  if (layer.kind === "vector") {
+    if (!leaflet.maplibreGL) {
+      throw new Error("MapLibre 底图未加载");
+    }
+    return leaflet.maplibreGL({
+      style: layer.style,
+      interactive: false,
+    }).addTo(map);
+  }
+
+  return leaflet.tileLayer(layer.url, layer.options).addTo(map);
+}
+
+function loadAsset(asset: (typeof MAP_ASSETS)[number]) {
   return new Promise<void>((resolve, reject) => {
     if (document.getElementById(asset.id)) {
       resolve();
@@ -246,8 +285,9 @@ export function MapStage({
     async function boot() {
       try {
         detectRegion();
-        await loadAsset(LEAFLET_ASSETS[0]);
-        await loadAsset(LEAFLET_ASSETS[1]);
+        for (const asset of MAP_ASSETS) {
+          await loadAsset(asset);
+        }
         if (!cancelled && window.L) setLeaflet(window.L);
       } catch (error) {
         if (!cancelled) setAssetError(error instanceof Error ? error.message : "地图资源加载失败");
@@ -271,7 +311,7 @@ export function MapStage({
     });
 
     modernLayersRef.current = MODERN_TILE_SOURCES.global.layers.map((layer) =>
-      leaflet.tileLayer(layer.url, layer.options).addTo(map),
+      addModernLayer(leaflet, layer, map),
     );
 
     leaflet.control.zoom({ position: "topright" }).addTo(map);
@@ -298,7 +338,7 @@ export function MapStage({
 
     removeLayers(modernLayersRef.current);
     modernLayersRef.current = tileSource.layers.map((layer) =>
-      leaflet.tileLayer(layer.url, layer.options).addTo(mapRef.current!),
+      addModernLayer(leaflet, layer, mapRef.current!),
     );
   }, [geoRegion, leaflet]);
 
