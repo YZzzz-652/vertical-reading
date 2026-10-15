@@ -448,6 +448,10 @@ button {
   font-family: var(--font-zh);
 }
 
+.leaflet-container .leaflet-gl-layer.maplibregl-map {
+  position: absolute;
+}
+
 .leaflet-control-zoom {
   margin-top: 62px !important;
   border: var(--bd-hair) !important;
