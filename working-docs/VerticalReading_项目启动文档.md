@@ -23,7 +23,7 @@
 |---|---|
 | 前端框架 | Next.js |
 | 样式 | Tailwind CSS |
-| 地图 | Leaflet；现代底图境外 OSM/CartoDB、墙内天地图（vec_w+cva_w）；历史地图瓦片自托管于阿里云 OSS |
+| 地图 | Leaflet + MapLibre；境外现代底图 CARTO Voyager 矢量、墙内天地图（vec_w+cva_w）；历史地图瓦片自托管于阿里云 OSS |
 | 部署平台 | Vercel |
 | 代码托管 | GitHub |
 | 数据源 | 飞书多维表格（服务端 API 代理 /api/events） |
@@ -91,3 +91,8 @@
 
 ### Codex 预览窗口与浏览器实际效果不一致
 - 解决：验证效果以 localhost 浏览器为准，不以 Codex 预览窗口为准。
+
+### CARTO 栅格底图无 key 只返回占位图
+- 问题：境外现代底图若请求 CARTO 栅格瓦片且不带 key，自 2026-09-25 起整张图变成 “API KEY REQUIRED” 占位图。
+- 解决：境外现代底图改用 CARTO Voyager 矢量样式（MapLibre 叠在 Leaflet 上）。以后若矢量也要求 key，配置 `NEXT_PUBLIC_CARTO_API_KEY`。
+- 记录日期：2026-10-15
